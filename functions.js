@@ -75,6 +75,7 @@ function addItem(_label = undefined) {
     clearTimeout(timeoutId);  // 1回目のクリック動作をキャンセルする
     e.style.backgroundColor = DELETE_BG_COLOR;
     setTimeout("deleteItem('"+id+"','"+label+"')", 500);
+    dblClicking = false; // ダブルクリック中状態解除
   }, false);    
 
   // タッチ時の動作
