@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8" />
+	<title>Work Time Logger</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="functions.js"></script>
+</head>
+<body>
+  <div id="contents">
+    <div id="items">
+      <div class="item" onclick="item(0)">終業</div>
+    </div>
+    <div>
+      <ul class="controls">
+        <li class="control"><input id="input_area" type="text" name="item_name" placeholder="項目名を入力"></li>
+        <li class="control" onclick="add()">追加</li>
+        <li class="control" onclick="save()">保存</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
