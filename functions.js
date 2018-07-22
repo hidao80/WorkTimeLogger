@@ -4,6 +4,8 @@ var logArray;
 const WORK_TIME_LOG = "worktimelog";
 const ITEM_LIST = "itemList";
 const LOG_FILE = "work_time_log.json";
+const WRITE_BG_COLOR = "#58D3F7";
+const DELETE_BG_COLOR = "#F6CEE3";
 
 var $ = id => {
   return document.querySelector("#"+id);
@@ -28,50 +30,55 @@ function addItem(_name = undefined) {
 
   let id = "item" + maxItemNum;
 
-  $("items").insertAdjacentHTML('afterbegin','<div id="item'+maxItemNum+'" class="item" >'+name+'</div>');
+  $("items").insertAdjacentHTML('afterbegin','<div id="'+id+'" class="item" >'+name+'</div>');
 
-  let e = $("item"+maxItemNum);
+  let e = $(id);
   
-  e.addEventListener('click', () => {
-    e.style.backgroundColor = "#faa";
-    writeLog(name);
-    setTimeout("clear("+id+")", 500);
-  }, false);
-    
   e.addEventListener('dbclick', () => {
-    deleteItem(id, name);
+    e.style.backgroundColor = DELETE_BG_COLOR;
+    setTimeout("deleteItem('"+id+"','"+name+"')", 500);
   }, false);    
 
+  let flag = false;
   if (window.ontouchstart !== undefined) {
     e.addEventListener('touchstart', () => {
-      if (event.targetTouches.length > 1) {
-        deleteItem(id, name);      
+      flag = true;
+      
+      if (event.targetTouches.length > 1) {      
+        e.style.backgroundColor = DELETE_BG_COLOR;
+        setTimeout("deleteItem('"+id+"','"+name+"')", 500);
+      } else {
+        e.style.backgroundColor = WRITE_BG_COLOR;
+        writeLog(name);
+        setTimeout("clear('"+id+"')", 500);
       }
     }, false);
-  }
+  } 
   
+  e.addEventListener('click', () => {
+    if (!flag) {
+      e.style.backgroundColor = WRITE_BG_COLOR;
+      writeLog(name);
+      setTimeout("clear('"+id+"')", 500);
+    }
+  }, false);
+    
   maxItemNum++;
 }
 
 function deleteItem(id, name) {
   let elem = $(id);
   
-  while (elem.firstChild) {
-    elem.removeChild(elem.firstChild);
-  }
-  elem.parentNode.removeChild($(id));
+  elem.parentNode.removeChild(elem);
 
   itemList.pop(name);
   localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
-}
-
-function deleteItem(id, name) {
-  deleteItem(id, name);
 }
     
 function writeLog(text) {
   let now = new Date();
   let data = {};
+  
   data[now.toLocaleTimeString()] = text; 
   logArray.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
@@ -112,16 +119,10 @@ function init() {
 
   let id = "item0";
   let e = $(id);
-  if (window.ontouchstart !== undefined) {
-    e.addEventListener('touchstart', () => {
-      itemTouchWrite(id, name)
-    }, false);
-    
-  } else {
-    e.addEventListener('click', name => {
-      e.style.backgroundColor = "#faa";
-      writeLog(name);
-      setTimeout("clear("+id+")", 500);
-    }, false);
-  }
+  let name = e.innerHTML;
+  e.addEventListener('click', () => {
+    e.style.backgroundColor = WRITE_BG_COLOR;
+    writeLog(name);
+    setTimeout("clear('"+id+"')", 500);
+  }, false);
 }

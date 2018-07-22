@@ -1,6 +1,8 @@
 html, body {
   height: 100%;
   margin: 0;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 #input_box {
