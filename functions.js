@@ -3,6 +3,9 @@ var $ = id => {
 }
 var itemList;
 var maxItemNum = 0;
+var logArray;
+const WORK_TIME_LOG = "worktimelog";
+const ITEM_LIST = "itemList";
 
 function addItem(_name = undefined) {
   let name;
@@ -11,7 +14,7 @@ function addItem(_name = undefined) {
     
     itemList.push(name);
     
-    localStorage.setItem("itemList", JSON.stringify(itemList));
+    localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
   } else {
     name = _name;
   }
@@ -33,29 +36,30 @@ function deleteItemTouch(id) {
 
 function writeLog(text) {
   let now = new Date();
-  localStorage.setItem(now.toLocaleTimeString(), text);
+  let data = {};
+  data[now.toLocaleTimeString()] = text; 
+  localStorage.setItem(WORK_TIME_LOG, data);
 }
 
 function saveLog() {
-//  Object.keys(localStorage).forEach(function(key) { 
-//    console.log(key);
-//  });
-
   var href = "data:application/octet-stream," + encodeURIComponent(JSON.stringify(localStorage));
   location.href = href;
 }
 
 function init() {
-  if (localStorage.getItem("itemList") !== undefined) {
-    itemList = JSON.parse(localStorage.getItem("itemList"));
+  if (localStorage.getItem(ITEM_LIST) !== undefined) {
+    itemList = JSON.parse(localStorage.getItem(ITEM_LIST));
     
     for (let i in itemList) { 
-  console.log(itemList[i]);
       if (itemList[i] != "" ) addItem(itemList[i]);
     }
   } else {
     itemList = new Array();
   }
-    console.log(JSON.parse(localStorage.getItem("itemList")));
-  console.log(itemList);
+
+  if (localStorage.getItem(WORK_TIME_LOG) !== undefined) {
+    logArray = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
+  } else {
+    logArray = new Array();
+  }
 }
