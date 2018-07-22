@@ -170,8 +170,6 @@ function init() {
       localStorage.getItem(ITEM_LIST) !== null &&
       localStorage.getItem(ITEM_LIST) !== "") {
     itemList = JSON.parse(localStorage.getItem(ITEM_LIST));
-
-    if (itemList === null) itemList = new Array();
     
     for (let i in itemList) { 
       if (itemList[i] != "" ) addItem(itemList[i]);
@@ -185,8 +183,6 @@ function init() {
       localStorage.getItem(WORK_TIME_LOG) !== null &&
       localStorage.getItem(WORK_TIME_LOG) !== "") {
     logArray = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
-
-    if (logArray === null) logArray = new Array();
   } else {
     logArray = new Array();
   }
