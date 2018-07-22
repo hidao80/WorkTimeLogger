@@ -4,6 +4,8 @@
 var itemList;
 var maxItemNum = 1;
 var logArray;
+var dblClicking = false;
+var timeoutId;
 
 /**
  * 定数
@@ -27,6 +29,19 @@ var $ = id => {
 function clear(id) {
   console.log(id);
   $(id).style.backgroundColor = 'transparent';
+}
+
+/**
+ * クリック時の動作
+ * 打刻する
+ */
+function timeStamp(id, label) {
+  let e = $(id);
+  
+  e.style.backgroundColor = WRITE_BG_COLOR;
+  writeLog(label);
+  setTimeout("clear('"+id+"')", 500);
+  dblClicking = false;
 }
 
 /**
@@ -57,6 +72,7 @@ function addItem(_label = undefined) {
   // ダブルクリック時の動作
   // 項目を削除する
   e.addEventListener('dblclick', () => {
+    clearTimeout(timeoutId);  // 1回目のクリック動作をキャンセルする
     e.style.backgroundColor = DELETE_BG_COLOR;
     setTimeout("deleteItem('"+id+"','"+label+"')", 500);
   }, false);    
@@ -86,9 +102,11 @@ function addItem(_label = undefined) {
   // 打刻する。ただし、タッチ操作された時は無効  
   e.addEventListener('click', () => {
     if (!flag) {
-      e.style.backgroundColor = WRITE_BG_COLOR;
-      writeLog(label);
-      setTimeout("clear('"+id+"')", 500);
+      // ダブルクリック時の2回目が来たら、1回目をキャンセルする
+      if (!dblClicking) {
+        dblClicking = true;
+        timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", 500);
+      }
     }
   }, false);
     
@@ -171,10 +189,12 @@ function init() {
   // 「終業」項目にクリック時イベントのアクションを登録
   let id = "item0";
   let e = $(id);
-  let name = e.innerHTML;
+  let label = e.innerHTML;
   e.addEventListener('click', () => {
-    e.style.backgroundColor = WRITE_BG_COLOR;
-    writeLog(name);
-    setTimeout("clear('"+id+"')", 500);
+    // ダブルクリック時の2回目が来たら、1回目をキャンセルする
+    if (!dblClicking) {
+      dblClicking = true;
+      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", 300);
+    }
   }, false);
 }
