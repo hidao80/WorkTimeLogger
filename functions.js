@@ -32,25 +32,22 @@ function addItem(_name = undefined) {
 
   let e = $("item"+maxItemNum);
   
+  e.addEventListener('click', () => {
+    e.style.backgroundColor = "#faa";
+    writeLog(name);
+    setTimeout("clear("+id+")", 500);
+  }, false);
+    
+  e.addEventListener('dbclick', () => {
+    deleteItem(id, name);
+  }, false);    
+
   if (window.ontouchstart !== undefined) {
     e.addEventListener('touchstart', () => {
-      if (event.targetTouches.length == 1) {
-        itemTouchWrite(id, name);
-      } else {
-        itemTouchDelete(id, name);      
+      if (event.targetTouches.length > 1) {
+        deleteItem(id, name);      
       }
     }, false);
-    
-  } else {
-    e.addEventListener('click', name => {
-      e.style.backgroundColor = "#faa";
-      writeLog(name);
-      setTimeout("clear("+id+")", 500);
-    }, false);
-    
-    e.addEventListener('dbclick', () => {
-      deleteItemClick(id, name);
-    }, false);    
   }
   
   maxItemNum++;
@@ -68,17 +65,7 @@ function deleteItem(id, name) {
   localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
 }
 
-function deleteItemClick(id, name) {
-  deleteItem(id, name);
-}
-
-function itemTouchWrite(id, name) {
-  $(id).style.backgroundColor = "#faa";
-  writeLog(name);
-  setTimeout("clear('"+id+"')", 500);
-}
-
-function itemTouchDelete(id, name) {
+function deleteItem(id, name) {
   deleteItem(id, name);
 }
     
