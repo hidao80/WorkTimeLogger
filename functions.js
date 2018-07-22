@@ -119,26 +119,26 @@ function addItem(_label = undefined) {
 /**
  * 項目リストの項目削除
  * string id   DOM の ID
- * string name ラベル名
+ * string label ラベル名
  */
-function deleteItem(id, name) {
+function deleteItem(id, label) {
   let elem = $(id);
   
   elem.parentNode.removeChild(elem);
 
-  itemList.pop(name);
+  itemList.pop(label);
   localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
 }
 
 /**
  * 打刻
- * string text ラベル名
+ * string label ラベル名
  */  
-function writeLog(text) {
+function writeLog(label) {
   let now = new Date();
   let data = {};
   
-  data[now.toLocaleTimeString()] = text; 
+  data[now.toLocaleTimeString()] = label; 
   logArray.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
 }
