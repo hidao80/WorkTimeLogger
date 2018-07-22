@@ -34,7 +34,7 @@ function addItem(_name = undefined) {
 
   let e = $(id);
   
-  e.addEventListener('dbclick', () => {
+  e.addEventListener('dblclick', () => {
     e.style.backgroundColor = DELETE_BG_COLOR;
     setTimeout("deleteItem('"+id+"','"+name+"')", 500);
   }, false);    
