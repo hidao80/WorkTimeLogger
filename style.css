@@ -1,0 +1,39 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#input_area {
+  width: 80%;
+  height: 1.5em;
+}
+
+.item {
+    text-align: center;
+    vertical-align: middle;
+    padding: 15px 0;
+    color: #666;
+    text-decoration: none;
+    font-size: 2em;
+}
+
+.controls {
+    display: table;
+    table-layout: fixed;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.control {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 15px 0;
+    color: #666;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+.control + .control {
+    border-left: 1px solid #CCC;
+}
