@@ -1,17 +1,23 @@
-var $ = id => {
-  return document.querySelector(id);
-}
 var itemList;
-var maxItemNum = 0;
+var maxItemNum = 1;
 var logArray;
 const WORK_TIME_LOG = "worktimelog";
 const ITEM_LIST = "itemList";
 const LOG_FILE = "work_time_log.json";
 
+var $ = id => {
+  return document.querySelector("#"+id);
+}
+
+function clear(id) {
+  console.log(id);
+  $(id).style.backgroundColor = 'transparent';
+}
+
 function addItem(_name = undefined) {
   let name;
   if (_name === undefined) {
-    name = $("#input_box").value;
+    name = $("input_box").value;
     
     itemList.push(name);
     
@@ -20,21 +26,62 @@ function addItem(_name = undefined) {
     name = _name;
   }
 
-  $("#items").insertAdjacentHTML('afterbegin','<div class="item" id="item'+maxItemNum+'" onclick=\'writeLog("'+name+'")\' ondbclick=\'deleteItem("item'+maxItemNum+'")\' ontouchstart=\'deleteItemTouch("item'+maxItemNum+'")\'>'+name+'</div>');
+  let id = "item" + maxItemNum;
 
+  $("items").insertAdjacentHTML('afterbegin','<div id="item'+maxItemNum+'" class="item" >'+name+'</div>');
+
+  let e = $("item"+maxItemNum);
+  
+  if (window.ontouchstart !== undefined) {
+    e.addEventListener('touchstart', () => {
+      if (event.targetTouches.length == 1) {
+        itemTouchWrite(id, name);
+      } else {
+        itemTouchDelete(id, name);      
+      }
+    }, false);
+    
+  } else {
+    e.addEventListener('click', name => {
+      e.style.backgroundColor = "#faa";
+      writeLog(name);
+      setTimeout("clear("+id+")", 500);
+    }, false);
+    
+    e.addEventListener('dbclick', () => {
+      deleteItemClick(id, name);
+    }, false);    
+  }
+  
   maxItemNum++;
 }
 
-function deleteItem(id) {
-  $('#items').removeChild($("#"+id));
-}
-
-function deleteItemTouch(id) {
-  if (event.targetTouches.length > 1) {
-    $('#items').removeChild($("#"+id));
+function deleteItem(id, name) {
+  let elem = $(id);
+  
+  while (elem.firstChild) {
+    elem.removeChild(elem.firstChild);
   }
+  elem.parentNode.removeChild($(id));
+
+  itemList.pop(name);
+  localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
 }
 
+function deleteItemClick(id, name) {
+  deleteItem(id, name);
+}
+
+function itemTouchWrite(id, name) {
+  $(id).style.backgroundColor = "#faa";
+  writeLog(name);
+  setTimeout("clear('"+id+"')", 500);
+}
+
+function itemTouchDelete(id, name) {
+  deleteItem(id, name);
+}
+    
 function writeLog(text) {
   let now = new Date();
   let data = {};
@@ -74,5 +121,20 @@ function init() {
     if (logArray === null) logArray = new Array();
   } else {
     logArray = new Array();
+  }
+
+  let id = "item0";
+  let e = $(id);
+  if (window.ontouchstart !== undefined) {
+    e.addEventListener('touchstart', () => {
+      itemTouchWrite(id, name)
+    }, false);
+    
+  } else {
+    e.addEventListener('click', name => {
+      e.style.backgroundColor = "#faa";
+      writeLog(name);
+      setTimeout("clear("+id+")", 500);
+    }, false);
   }
 }
