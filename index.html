@@ -9,11 +9,11 @@
 <body>
   <div id="contents">
     <div id="items">
-      <div class="item" onclick="item(0)">終業</div>
+      <div class="item" onclick="writeLog('終業')">終業</div>
     </div>
-    <div>
+    <div id="controls">
       <ul class="controls">
-        <li class="control"><input id="input_area" type="text" name="item_name" placeholder="項目名を入力"></li>
+        <li class="control"><input id="input_box" type="text" name="item_name" placeholder="項目名を入力"></li>
         <li class="control" onclick="add()">追加</li>
         <li class="control" onclick="save()">保存</li>
       </ul>
