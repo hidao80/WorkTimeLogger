@@ -10,6 +10,7 @@ html, body {
   border: none;
   box-sizing: border-box;
   font-size: 1em;
+  overflow:hidden;
 }
 
 #contents {
@@ -41,7 +42,7 @@ html, body {
     padding: 0.5em 0;
     color: #666;
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 .control + .control {
     border-left: 1px solid #CCC;
