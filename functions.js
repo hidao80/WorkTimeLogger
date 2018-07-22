@@ -42,8 +42,15 @@ function writeLog(text) {
 }
 
 function saveLog() {
-  var href = "data:application/octet-stream," + encodeURIComponent(JSON.stringify(localStorage));
-  location.href = href;
+//  var href = "data:application/octet-stream," + encodeURIComponent(JSON.stringify(localStorage));
+//  location.href = href;
+  //ファイルを作ってダウンロードします。
+  let resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
+  let downLoadLink = document.createElement("a");
+  downLoadLink.download = $scope.fileName;
+  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text.plain"}));
+  downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
+  downLoadLink.click();
 }
 
 function init() {
