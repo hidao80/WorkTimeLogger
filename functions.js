@@ -166,7 +166,8 @@ function saveLog() {
  */
 function init() {
   // 項目リストがなければ空の配列を用意する
-  if (localStorage.getItem(ITEM_LIST) !== undefined) {
+  if (localStorage.getItem(ITEM_LIST) !== undefined &&
+      localStorage.getItem(ITEM_LIST !== "")) {
     itemList = JSON.parse(localStorage.getItem(ITEM_LIST));
 
     if (itemList === null) itemList = new Array();
@@ -179,7 +180,8 @@ function init() {
   }
 
   // ログがなければ空の配列を用意する
-  if (localStorage.getItem(WORK_TIME_LOG) !== undefined) {
+  if (localStorage.getItem(WORK_TIME_LOG) !== undefined &&
+      localStorage.getItem(WORK_TIME_LOG !== "")) {
     logArray = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
 
     if (logArray === null) logArray = new Array();
