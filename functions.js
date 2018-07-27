@@ -40,7 +40,7 @@ function timeStamp(id, label) {
   
   e.style.backgroundColor = WRITE_BG_COLOR;
   writeLog(label);
-  setTimeout("clear('"+id+"')", 500);
+  //setTimeout("clear('"+id+"')", 500);
   dblClicking = false;
 }
 
@@ -83,7 +83,6 @@ function addItem(_label = undefined) {
   if (window.ontouchstart !== undefined) {
     e.addEventListener('touchstart', () => {
       flag = true;
-      
       if (event.targetTouches.length > 1) {      
         // 2点以上同時タップの場合
         // 項目を削除する
@@ -97,7 +96,7 @@ function addItem(_label = undefined) {
         setTimeout("clear('"+id+"')", 500);
       }
     }, false);
-  } 
+  }
   
   // クリック時の動作
   // 打刻する。ただし、タッチ操作された時は無効  
@@ -131,16 +130,51 @@ function deleteItem(id, label) {
 }
 
 /**
+ * ログソート
+ * @return array ログを配列にして日時順でソートしたもの
+ */
+function sortLog() {
+  let arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
+  
+  arrLogs.sort((a,b) => {
+    if (a.time > b.time) return 1;
+    else return -1;
+  });
+  
+  console.log(arrLogs);
+  return arrLogs;
+}
+
+/**
+ * ログ表示
+ */
+function displayLog(arrLogs) {
+  let dom = $('logs');
+  
+  let arrLog = [{time: "aaa",kind:"aaa"},{time:"bbb",kind:"bbb"}];
+  dom.innerHTML = "<table>";
+  for (let idx in arrLog) {
+    dom.innerHTML += idx +"<tr><td>" + arrLog[idx].time + "</td><td>" + arrLog[idx].kind + "</td></tr>";
+  }
+  dom.innerHTML += "</table>";
+}
+
+/**
  * 打刻
  * string label ラベル名
  */  
 function writeLog(label) {
   let now = new Date();
   let data = {};
+  let d = new Date();
+  let dow = ["月","火","水","木","金","土","日"];
   
-  data[now.toLocaleTimeString()] = label; 
+  data.time = d.getFullYear() +"/"+ (d.getMonth() + 1) + "/" + d.getDate() + " (" + dow[d.getDay()] + ") " + now.toLocaleTimeString();
+  data.kind = label; 
   logArray.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
+  
+  displayLog(sortLog());
 }
 
 /**

@@ -16,7 +16,19 @@ html, body {
 }
 
 #contents {
-  overflow:hidden;
+}
+
+#logs {
+  float: left;
+  width: 20%;
+  border-right: 1px solid bray; 
+  overflow: scroll;
+}
+
+#controls {
+  float: right;
+  width: 80%;
+  overflow:scroll;
 }
 
 .item {

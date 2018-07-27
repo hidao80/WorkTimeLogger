@@ -8,15 +8,19 @@
 </head>
 <body>
   <div id="contents">
-    <div id="items">    
-      <div id="item0" class="item" onclick="writeLog('終業')">終業</div>
+    <div id="logs">
     </div>
     <div id="controls">
-      <ul class="controls">
-        <li class="control"><input id="input_box" type="text" name="item_name" placeholder="項目名を入力"></li>
-        <li class="control" onclick="addItem()">追加</li>
-        <li class="control" onclick="saveLog()">保存</li>
-      </ul>
+      <div id="items">    
+        <div id="item0" class="item" onclick="writeLog('終業')">終業</div>
+      </div>
+      <div id="controls">
+        <ul class="controls">
+          <li class="control"><input id="input_box" type="text" name="item_name" placeholder="項目名を入力"></li>
+          <li class="control" onclick="addItem()">追加</li>
+          <li class="control" onclick="saveLog()">保存</li>
+        </ul>
+      </div>
     </div>
   </div>
   <script>init();</script>
