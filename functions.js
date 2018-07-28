@@ -137,7 +137,7 @@ function sortLog() {
   let arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
   
   arrLogs.sort((a,b) => {
-    if (a.time > b.time) return 1;
+    if (a.time < b.time) return 1;
     else return -1;
   });
   
@@ -151,8 +151,9 @@ function sortLog() {
 function displayLog(arrLogs) {
   let dom = $('log_table');
   
+  dom.innerHTML = "";
   for (let idx in arrLogs) {
-    dom.insertAdjacentHTML('beforeend',"<tr><td>" + arrLogs[idx].time + "</td><td>" + arrLogs[idx].kind + "</td></tr>");
+    dom.innerHTML += "<tr><td>" + arrLogs[idx].time + "</td><td>" + arrLogs[idx].kind + "</td></tr>";
   }
 }
 
@@ -164,9 +165,9 @@ function writeLog(label) {
   let now = new Date();
   let data = {};
   let d = new Date();
-  let dow = ["月","火","水","木","金","土","日"];
+  let dow = ["日","月","火","水","木","金","土"];
   
-  data.time = d.getFullYear() +"/"+ (d.getMonth() + 1) + "/" + d.getDate() + " (" + dow[d.getDay()] + ") " + now.toLocaleTimeString();
+  data.time = d.getFullYear() +"/"+ (d.getMonth() + 1) + "/" + d.getDate() + dow[d.getDay()]+" "+ d.getHours() + ":"+d.getMinutes();
   data.kind = label; 
   logArray.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
