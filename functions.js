@@ -15,6 +15,7 @@ const ITEM_LIST = "itemList";
 const LOG_FILE = "work_time_log.json";
 const WRITE_BG_COLOR = "#58D3F7";
 const DELETE_BG_COLOR = "#F6CEE3";
+const WAIT_TIME = 300;
 
 /**
  * ID を入れると DOM Element を返す
@@ -74,15 +75,15 @@ function addItem(_label = undefined) {
   e.addEventListener('dblclick', () => {
     clearTimeout(timeoutId);  // 1回目のクリック動作をキャンセルする
     e.style.backgroundColor = DELETE_BG_COLOR;
-    setTimeout("deleteItem('"+id+"','"+label+"')", 500);
+    setTimeout("deleteItem('"+id+"','"+label+"')", WAIT_TIME);
     dblClicking = false; // ダブルクリック中状態解除
   }, false);    
 
   // タッチ時の動作
-  let flag = false;
   if (window.ontouchstart !== undefined) {
-    e.addEventListener('touchstart', () => {
-      flag = true;
+    e.addEventListener('touchstart', (event) => {
+      // 以降のイベントを検知しない
+      event.preventDefault();
       if (event.targetTouches.length > 1) {      
         // 2点以上同時タップの場合
         // 項目を削除する
@@ -91,9 +92,7 @@ function addItem(_label = undefined) {
       } else {
         // 1点タップの場合
         // 打刻する
-        e.style.backgroundColor = WRITE_BG_COLOR;
-        writeLog(label);
-        setTimeout("clear('"+id+"')", 500);
+        timeStamp(id,label);
       }
     }, false);
   }
@@ -101,12 +100,10 @@ function addItem(_label = undefined) {
   // クリック時の動作
   // 打刻する。ただし、タッチ操作された時は無効  
   e.addEventListener('click', () => {
-    if (!flag) {
-      // ダブルクリック時の2回目が来たら、1回目をキャンセルする
-      if (!dblClicking) {
-        dblClicking = true;
-        timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", 500);
-      }
+    // ダブルクリック時の2回目が来たら、1回目をキャンセルする
+    if (!dblClicking) {
+      dblClicking = true;
+      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", WAIT_TIME);
     }
   }, false);
     
@@ -219,15 +216,30 @@ function init() {
     logArray = new Array();
   }
 
-  // 「終業」項目にクリック時イベントのアクションを登録
+  /**
+   *「終業」項目にクリック時イベントのアクションを登録
+    */
   let id = "item0";
   let e = $(id);
-  let label = e.innerHTML;
+  let label = e.innerText;
+
+  // タッチ時の動作
+  if (window.ontouchstart !== undefined) {
+    e.addEventListener('touchstart', (event) => {
+      // 以降のイベントを検知しない
+      event.preventDefault();
+      // 打刻する
+      timeStamp(id,label);
+    }, false);
+  }
+  
+  // クリック時の動作
+  // 打刻する。ただし、タッチ操作された時は無効  
   e.addEventListener('click', () => {
     // ダブルクリック時の2回目が来たら、1回目をキャンセルする
     if (!dblClicking) {
       dblClicking = true;
-      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", 300);
+      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", WAIT_TIME);
     }
   }, false);
 }
