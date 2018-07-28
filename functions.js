@@ -39,7 +39,7 @@ function clear(id) {
 function timeStamp(id, label) {
   let e = $(id);
   
-  e.style.backgroundColor = WRITE_BG_COLOR;
+  //e.style.backgroundColor = WRITE_BG_COLOR;
   writeLog(label);
   //setTimeout("clear('"+id+"')", 500);
   dblClicking = false;
@@ -65,7 +65,7 @@ function addItem(_label = undefined) {
   // 画面に項目追加
   let id = "item" + maxItemNum;
 
-  $("items").insertAdjacentHTML('afterbegin','<div id="'+id+'" class="item" >'+label+'</div>');
+  $("items").insertAdjacentHTML('afterbegin','<input type="radio" name="kind" id="item'+maxItemNum+'"><label for="item'+maxItemNum+'">'+label+'</label>');
 
   // イベントリスナの設定
   let e = $(id);

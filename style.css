@@ -38,33 +38,58 @@ html, body {
   height: 100vh;
 }
 
-.item {
-    text-align: center;
-    vertical-align: middle;
-    padding: 1em 0;
-    color: #666;
-    text-decoration: none;
-    font-size: 2em;
-    border-bottom: 1px solid #666
-}
-
 .controls {
-    display: table;
-    table-layout: fixed;
-    text-align: center;
-    vertical-align: middle;
-    width: 100%;
+  display: table;
+  table-layout: fixed;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
 }
 
 .control {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-    padding: 0.5em 0;
-    color: #666;
-    text-decoration: none;
-    font-size: 1em;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5em 0;
+  color: #666;
+  text-decoration: none;
+  font-size: 1em;
 }
 .control + .control {
     border-left: 1px solid #CCC;
+}
+
+input[type="radio"] {
+	display: none;
+}
+
+input[type="radio"]:checked + label {
+  background-color: #58D3F7;
+}
+
+label {
+  color: #666;
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1em 0;
+  font-size: 2em;
+  border-bottom: 1px solid #666;
+}
+
+.files-item-div {
+  border-bottom: 1px solid #eee;
+  margin:1rem;
+}
+input[type="radio"]:checked + .files-item-label {
+  color: #fff;
+  background-color: deepskyblue;
+}
+.files-item-label {
+  display: block;
+  font-size: 1.3rem;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  white-space: nowrap;
 }
