@@ -149,14 +149,11 @@ function sortLog() {
  * ログ表示
  */
 function displayLog(arrLogs) {
-  let dom = $('logs');
+  let dom = $('log_table');
   
-  let arrLog = [{time: "aaa",kind:"aaa"},{time:"bbb",kind:"bbb"}];
-  dom.innerHTML = "<table>";
-  for (let idx in arrLog) {
-    dom.innerHTML += idx +"<tr><td>" + arrLog[idx].time + "</td><td>" + arrLog[idx].kind + "</td></tr>";
+  for (let idx in arrLogs) {
+    dom.insertAdjacentHTML('beforeend',"<tr><td>" + arrLogs[idx].time + "</td><td>" + arrLogs[idx].kind + "</td></tr>");
   }
-  dom.innerHTML += "</table>";
 }
 
 /**
