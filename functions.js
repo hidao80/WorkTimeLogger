@@ -145,9 +145,10 @@ function saveLog() {
   let resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
   let downLoadLink = document.createElement("a");
 
+  log = resultJson.replace(/\\/g, "").slice(1,-1);
+
   downLoadLink.download = LOG_FILE;
-//  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text/json"}));
-  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "application/octet-stream"}));
+  downLoadLink.href = URL.createObjectURL(new Blob([log], {type: "text/plain"}));
   downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
   downLoadLink.click();
 }
