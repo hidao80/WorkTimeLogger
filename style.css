@@ -27,14 +27,14 @@ html, body {
   float: left;
   width: 30vw;
   border-right: 1px solid bray; 
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100vh;
 }
 
 #controls {
   float: right;
   width: 70vw;
-  overflow:scroll;
+  overflow-y: auto;
   height: 100vh;
 }
 
