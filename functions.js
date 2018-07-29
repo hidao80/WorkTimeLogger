@@ -1,11 +1,9 @@
 /**
  * グローバル変数
  */
-var itemList;
+var arrItem;
+var arrLog;
 var maxItemNum = 1;
-var logArray;
-var dblClicking = false;
-var timeoutId;
 
 /**
  * 定数
@@ -14,8 +12,6 @@ const WORK_TIME_LOG = "worktimelog";
 const ITEM_LIST = "itemList";
 const LOG_FILE = "work_time_log.json";
 const WRITE_BG_COLOR = "#58D3F7";
-const DELETE_BG_COLOR = "#F6CEE3";
-const WAIT_TIME = 300;
 
 /**
  * ID を入れると DOM Element を返す
@@ -42,9 +38,9 @@ function addItem(_label = undefined) {
   if (_label === undefined) {
     label = $("input_box").value;
     
-    itemList.push(label);
+    arrItem.push(label);
     
-    localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
+    localStorage.setItem(ITEM_LIST, JSON.stringify(arritem));
   } else {
     label = _label;
   }
@@ -86,8 +82,8 @@ function deleteItem(id, label) {
 console.log(id,label);
   dom.parentNode.removeChild(dom);
 
-  itemList.pop(label);
-  localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
+  arrItem.pop(label);
+  localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
 }
 
 /**
@@ -135,16 +131,14 @@ function writeLog(label) {
     ('00' + d.getHours()).substr(-2) + ":" +
     ('00' + d.getMinutes()).substr(-2);
   data.kind = label; 
-  logArray.push(data);
-  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
+  arrLog.push(data);
+  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
   
   displayLog(sortLog());
 }
 
 /**
  * ログファイルのダウンロード
- *
- * 同時にlocalStorage 内のログも削除します
  */
 function saveLog() {
   //ファイルを作ってダウンロードします。
@@ -154,36 +148,61 @@ function saveLog() {
   downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text.plain"}));
   downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
   downLoadLink.click();
+}
 
-  // ログの消去
-  localStorage.setItem(WORK_TIME_LOG, "");
+/**
+ * ログファイルの削除
+ */
+function deleteLog() {
+  localStorage.setItem(WORK_TIME_LOG, "[]");
+}
+
+/**
+ * localStorage にログがあるかどうかチェック
+ */
+function validateAndGetLog() {
+  let logs;
+  
+  // ログがなければ空の配列を用意する
+  if (localStorage.getItem(WORK_TIME_LOG) !== undefined &&
+      localStorage.getItem(WORK_TIME_LOG) !== null &&
+      localStorage.getItem(WORK_TIME_LOG) !== "") {
+    logs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
+  } else {
+    logs = new Array();
+  }
+  
+  return logs;
+} 
+
+/**
+ * localStorage に項目リストがあるかどうかチェック
+ */
+function validateAndGetItems() {
+  let items;
+  
+  // 項目リストがなければ空の配列を用意する
+  if (localStorage.getItem(ITEM_LIST) !== undefined &&
+      localStorage.getItem(ITEM_LIST) !== null &&
+      localStorage.getItem(ITEM_LIST) !== "") {
+    items = JSON.parse(localStorage.getItem(ITEM_LIST));
+    
+    for (let i in items) { 
+      if (items[i] != "" ) addItem(items[i]);
+    }
+  } else {
+    items = new Array();
+  }
+  
+  return items;
 }
 
 /**
  * 初期設定
  */
 function init() {
-  // 項目リストがなければ空の配列を用意する
-  if (localStorage.getItem(ITEM_LIST) !== undefined &&
-      localStorage.getItem(ITEM_LIST) !== null &&
-      localStorage.getItem(ITEM_LIST) !== "") {
-    itemList = JSON.parse(localStorage.getItem(ITEM_LIST));
-    
-    for (let i in itemList) { 
-      if (itemList[i] != "" ) addItem(itemList[i]);
-    }
-  } else {
-    itemList = new Array();
-  }
-
-  // ログがなければ空の配列を用意する
-  if (localStorage.getItem(WORK_TIME_LOG) !== undefined &&
-      localStorage.getItem(WORK_TIME_LOG) !== null &&
-      localStorage.getItem(WORK_TIME_LOG) !== "") {
-    logArray = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
-  } else {
-    logArray = new Array();
-  }
+  arrLog = validateAndGetLog();
+  arrItem = validateAndGetItems();
 
   /**
    *「終業」項目にクリック時イベントのアクションを登録
