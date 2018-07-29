@@ -255,7 +255,8 @@ function writeVersion() {
             ('00' + d.getHours()).substr(-2) +
             ('00' + d.getMinutes()).substr(-2);
           let dom = $("delete0");
-          if (dom.innerText < strTime) dom.innerText = "ver<br>" + strTime;
+          if (dom.innerText < strTime) dom.innerText = "ver\n" + strTime;
+          console.log(dom.innerText, strTime);
         }
       }
       xhr.send(null);
