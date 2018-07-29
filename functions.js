@@ -257,13 +257,14 @@ function writeVersion() {
             ('00' + d.getDate()).substr(-2) + "." + 
             ('00' + d.getHours()).substr(-2) +
             ('00' + d.getMinutes()).substr(-2);
-          console.log(target[i],tmp);
+          //console.log(target[i],tmp);
           if (version < tmp) version = tmp;
         }
       }
       xhr.send(null);
     }
-    document.title += " ver" + version;
-    console.log(document.title);
+    //document.title += " ver" + version;
+    //console.log(document.title);
+    $("delete0").innerText = "ver\n" + version;
   }
 }
