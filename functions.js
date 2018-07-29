@@ -146,7 +146,8 @@ function saveLog() {
   let downLoadLink = document.createElement("a");
 
   downLoadLink.download = LOG_FILE;
-  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text/plain"}));
+//  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text/json"}));
+  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "application/octet-stream"}));
   downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
   downLoadLink.click();
 }
