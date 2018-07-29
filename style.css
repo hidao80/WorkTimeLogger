@@ -99,20 +99,3 @@ input[type="radio"]:checked + .label + .delete {
   border-bottom: 1px solid #666;
   width: 20%;
 }
-
-.files-item-div {
-  border-bottom: 1px solid #eee;
-  margin:1rem;
-}
-input[type="radio"]:checked + .files-item-label {
-  color: #fff;
-  background-color: deepskyblue;
-}
-.files-item-label {
-  display: block;
-  font-size: 1.3rem;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  white-space: nowrap;
-}

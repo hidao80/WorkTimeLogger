@@ -154,7 +154,11 @@ function saveLog() {
  * ログファイルの削除
  */
 function deleteLog() {
-  localStorage.setItem(WORK_TIME_LOG, "[]");
+  let empty = [];
+  
+  arrLog = empty;
+  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(empty));
+  displayLog(empty);
 }
 
 /**
