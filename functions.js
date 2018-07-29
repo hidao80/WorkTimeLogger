@@ -128,7 +128,12 @@ function writeLog(label) {
   let d = new Date();
   let dow = ["日","月","火","水","木","金","土"];
   
-  data.time = d.getFullYear() +"/"+ (d.getMonth() + 1) + "/" + d.getDate() + dow[d.getDay()]+" "+ d.getHours() + ":"+d.getMinutes();
+  data.time = d.getFullYear() + "/" + 
+    ('00' + d.getMonth() + 1).substr(-2) + "/" + 
+    ('00' + d.getDate()).substr(-2) + 
+    dow[d.getDay()] + " " + 
+    ('00' + d.getHours()).substr(-2) + ":" +
+    ('00' + d.getMinutes()).substr(-2);
   data.kind = label; 
   logArray.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(logArray));
