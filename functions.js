@@ -86,7 +86,6 @@ function addItem(_label = undefined) {
  */
 function deleteItem(id, label) {
   let dom = $(id);
-console.log(id,label);
   dom.parentNode.removeChild(dom);
 
   arrItem.pop(label);
@@ -95,6 +94,7 @@ console.log(id,label);
 
 /**
  * ログソート
+ * 同じ時刻のものは入れ替わる可能性がある
  * @return array ログを配列にして日時順でソートしたもの
  */
 function sortLog() {
@@ -116,8 +116,8 @@ function displayLog(arrLogs) {
   let dom = $('log_table');
   
   dom.innerHTML = "";
-  for (let idx in arrLogs) {
-    dom.innerHTML += "<tr><td>" + arrLogs[idx].time + "</td><td>" + arrLogs[idx].kind + "</td></tr>";
+  for (let entry of arrLogs) {
+    dom.innerHTML += "<tr><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
   }
 }
 
@@ -152,7 +152,7 @@ function saveLog() {
   let resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
   let downLoadLink = document.createElement("a");
 
-  log = resultJson.replace(/\\/g, "").slice(1,-1);
+  log = resultJson.replace(/\\/g, "").slice(1,-1); // 文字列を JSON に整形
 
   downLoadLink.download = LOG_FILE;
   downLoadLink.href = URL.createObjectURL(new Blob([log], {type: "application/octet-stream"}));
@@ -201,8 +201,8 @@ function validateAndGetItems() {
       localStorage.getItem(ITEM_LIST) !== "") {
     items = JSON.parse(localStorage.getItem(ITEM_LIST));
     
-    for (let i in items) { 
-      if (items[i] != "" ) addItem(items[i]);
+    for (let item of items) { 
+      if (item != "") addItem(item);
     }
   } else {
     items = new Array();
@@ -221,7 +221,6 @@ function init() {
   /**
    *「終業」項目にクリック時イベントのアクションを登録
     */
-  let id = "radio0";
   let e = $(id);
   let label = $('label0').innerText;
 
@@ -240,29 +239,27 @@ function init() {
 */
 function writeVersion() {
   let xhr = new XMLHttpRequest();
-  let target = ["./functions.js","./index.html","./style.css"];
-  let version = "";
-  
+  let target = ["functions.js","index.html","style.css"];
+  let dom = $("delete0");
+
   if (xhr) {
-    for (let i in target) {
+    for (let file of target) {
       //通信実行
-      xhr.open("get",target[i], false);
+      xhr.open("get",file, false);
       xhr.onreadystatechange = () => {
         //通信完了
         if (xhr.readyState == 4 && xhr.status == 200) {
           //読込後の処理
           let d = new Date(xhr.getResponseHeader("last-modified"));
-          let tmp = d.getFullYear() + 
+          let strTime = d.getFullYear() + 
             ('00' + (d.getMonth() + 1)).substr(-2) + 
             ('00' + d.getDate()).substr(-2) + "." + 
             ('00' + d.getHours()).substr(-2) +
             ('00' + d.getMinutes()).substr(-2);
-          //console.log(target[i],tmp);
-          if (version < tmp) version = tmp;
+          if (dom.innerText < strTime) dom.innerText = "ver<br>" + strTime;
         }
       }
       xhr.send(null);
     }
-    $("delete0").innerText = "ver\n" + version;
   }
 }
