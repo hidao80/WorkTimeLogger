@@ -148,8 +148,8 @@ function saveLog() {
   log = resultJson.replace(/\\/g, "").slice(1,-1);
 
   downLoadLink.download = LOG_FILE;
-  downLoadLink.href = URL.createObjectURL(new Blob([log], {type: "text/plain"}));
-  downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
+  downLoadLink.href = URL.createObjectURL(new Blob([log], {type: "application/octet-stream"}));
+  downLoadLink.dataset.downloadurl = ["application/octet-stream", LOG_FILE, downLoadLink.href].join(":");
   downLoadLink.click();
 }
 
