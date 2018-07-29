@@ -36,12 +36,19 @@ function addItem(_label = undefined) {
   // 引数がなければテキストボックスからラベルを取得
   let label;
   if (_label === undefined) {
+    // テキストボックスから追加
     label = $("input_box").value;
+    
+    // 重複する項目は登録させない
+    for (let i in arrItem) {
+      if (arrItem[i] == label) return; 
+    }
     
     arrItem.push(label);
     
     localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
   } else {
+    // localStorage から読み込み
     label = _label;
   }
 
@@ -224,4 +231,36 @@ function init() {
   }, false);
   
   displayLog(sortLog());
+}
+
+/**
+ * function.js、index.html、style.css のタイムスタンプを読み取り最も新しい
+ * ものをバージョン番号とする
+*/
+function getVersion() {
+  let xhr = new XMLHttpRequest();
+  let target = ["function.js","index.html","style.css"];
+  let version = "";
+  
+  if (xhr) {
+    for (let i in target) {
+      //通信実行
+      xhr.open("get",target[i], false);
+      xhr.onreadystatechange = () => {
+        //通信完了
+        if (obj.readyState == 4 && obj.status == 200) {
+          //読込後の処理
+          let date = new Date(xhr.getResponseHeader("last-modified"));
+          let tmp = d.getFullYear() + 
+            ('00' + (d.getMonth() + 1)).substr(-2) + 
+            ('00' + d.getDate()).substr(-2) + "." + 
+            ('00' + d.getHours()).substr(-2) +
+            ('00' + d.getMinutes()).substr(-2);
+          if (version < tmp) version = tmp;
+        }
+      }
+      xhr.send(null);
+    }
+    document.title += " ver.:" + version;
+  }
 }
