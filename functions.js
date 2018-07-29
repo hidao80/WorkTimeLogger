@@ -240,7 +240,7 @@ function init() {
 */
 function writeVersion() {
   let xhr = new XMLHttpRequest();
-  let target = ["functions.js","index.html","style.css"];
+  let target = ["./functions.js","./index.html","./style.css"];
   let version = "";
   
   if (xhr) {
@@ -263,8 +263,6 @@ function writeVersion() {
       }
       xhr.send(null);
     }
-    //document.title += " ver" + version;
-    //console.log(document.title);
     $("delete0").innerText = "ver\n" + version;
   }
 }
