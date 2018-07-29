@@ -105,7 +105,6 @@ function sortLog() {
     else return -1;
   });
   
-  //console.log(arrLogs);
   return arrLogs;
 }
 
@@ -221,11 +220,11 @@ function init() {
   /**
    *「終業」項目にクリック時イベントのアクションを登録
     */
-  let e = $(id);
+  let dom = $("radio0");
   let label = $('label0').innerText;
 
   // クリック時の動作
-  e.addEventListener('click', () => {
+  dom.addEventListener('click', () => {
     timeStamp(label);
   }, false);
   
@@ -240,7 +239,6 @@ function init() {
 function writeVersion() {
   let xhr = new XMLHttpRequest();
   let target = ["functions.js","index.html","style.css"];
-  let dom = $("delete0");
 
   if (xhr) {
     for (let file of target) {
@@ -256,6 +254,7 @@ function writeVersion() {
             ('00' + d.getDate()).substr(-2) + "." + 
             ('00' + d.getHours()).substr(-2) +
             ('00' + d.getMinutes()).substr(-2);
+          let dom = $("delete0");
           if (dom.innerText < strTime) dom.innerText = "ver<br>" + strTime;
         }
       }
