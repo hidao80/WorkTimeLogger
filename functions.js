@@ -144,8 +144,9 @@ function saveLog() {
   //ファイルを作ってダウンロードします。
   let resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
   let downLoadLink = document.createElement("a");
+
   downLoadLink.download = LOG_FILE;
-  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text.plain"}));
+  downLoadLink.href = URL.createObjectURL(new Blob([resultJson], {type: "text/plain"}));
   downLoadLink.dataset.downloadurl = ["text/plain", downLoadLink.download, downLoadLink.href].join(":");
   downLoadLink.click();
 }
