@@ -40,7 +40,7 @@ function addItem(_label = undefined) {
     
     arrItem.push(label);
     
-    localStorage.setItem(ITEM_LIST, JSON.stringify(arritem));
+    localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
   } else {
     label = _label;
   }
