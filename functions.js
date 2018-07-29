@@ -102,7 +102,7 @@ function sortLog() {
     else return -1;
   });
   
-  console.log(arrLogs);
+  //console.log(arrLogs);
   return arrLogs;
 }
 
@@ -185,10 +185,12 @@ function init() {
     */
   let id = "radio0";
   let e = $(id);
-  let label = e.innerText;
+  let label = $('label0').innerText;
 
   // クリック時の動作
   e.addEventListener('click', () => {
     timeStamp(label);
   }, false);
+  
+  displayLog(sortLog());
 }
