@@ -36,12 +36,19 @@ function addItem(_label = undefined) {
   // 引数がなければテキストボックスからラベルを取得
   let label;
   if (_label === undefined) {
+    // テキストボックスから追加
     label = $("input_box").value;
+    
+    // 重複する項目は登録させない
+    for (let i in arrItem) {
+      if (arrItem[i] == label) return; 
+    }
     
     arrItem.push(label);
     
     localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
   } else {
+    // localStorage から読み込み
     label = _label;
   }
 
