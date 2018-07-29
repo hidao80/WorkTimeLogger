@@ -28,13 +28,8 @@ var $ = id => {
  * クリック時の動作
  * 打刻する
  */
-function timeStamp(id, label) {
-  let e = $(id);
-  
-  //e.style.backgroundColor = WRITE_BG_COLOR;
+function timeStamp(label) {
   writeLog(label);
-  //setTimeout("clear('"+id+"')", 500);
-  dblClicking = false;
 }
 
 /**
@@ -65,7 +60,7 @@ function addItem(_label = undefined) {
     
   // クリック時の動作
   radio_ev.addEventListener('click', () => {
-    timeStamp(radio_id,label);
+    timeStamp(label);
   }, false);
   
   // 削除ラベルイベントリスナの設定
@@ -194,6 +189,6 @@ function init() {
 
   // クリック時の動作
   e.addEventListener('click', () => {
-    timeStamp(id,label);
+    timeStamp(label);
   }, false);
 }
