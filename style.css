@@ -45,7 +45,6 @@ html, body {
   width: 100%;
   padding: 0px;
 }
-
 .control {
   display: table-cell;
   text-align: center;
@@ -60,8 +59,9 @@ html, body {
 }
 
 .item {
-  clear: left;
+  display: table;
   width: 100%;
+  height: 5em;
 }
 
 input[type="radio"] {
@@ -77,25 +77,29 @@ input[type="radio"]:checked + .label + .delete {
 }
 
 .label {
-  float: left;
   color: #666;
-  display: block;
+  display: table-cell;
   text-align: center;
   vertical-align: middle;
-  padding: 1em 0;
   font-size: 2em;
   border-bottom: 1px solid #666;
   width: 80%;
+  height: 100%;
 }
 
 .delete {
-  float: left;
   color: #666;
-  display: block;
+  display: table-cell;
   text-align: center;
   vertical-align: middle;
-  padding: 1em 0;
   font-size: 2em;
   border-bottom: 1px solid #666;
   width: 20%;
+  height: 100%;
 }
+
+.version  {
+  text-align: left;
+  font-size: 1em;
+}
+
