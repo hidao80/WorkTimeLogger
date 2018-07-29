@@ -125,7 +125,7 @@ function writeLog(label) {
   let dow = ["日","月","火","水","木","金","土"];
   
   data.time = d.getFullYear() + "/" + 
-    ('00' + d.getMonth() + 1).substr(-2) + "/" + 
+    ('00' + (d.getMonth() + 1)).substr(-2) + "/" + 
     ('00' + d.getDate()).substr(-2) + 
     dow[d.getDay()] + " " + 
     ('00' + d.getHours()).substr(-2) + ":" +
