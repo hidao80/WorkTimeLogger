@@ -59,15 +59,25 @@ html, body {
     border-left: 1px solid #CCC;
 }
 
+.item {
+  clear: left;
+  width: 100%;
+}
+
 input[type="radio"] {
 	display: none;
 }
 
-input[type="radio"]:checked + label {
+input[type="radio"]:checked + .label {
   background-color: #58D3F7;
 }
 
-label {
+input[type="radio"]:checked + .label + .delete {
+  background-color: #58D3F7;
+}
+
+.label {
+  float: left;
   color: #666;
   display: block;
   text-align: center;
@@ -75,6 +85,19 @@ label {
   padding: 1em 0;
   font-size: 2em;
   border-bottom: 1px solid #666;
+  width: 80%;
+}
+
+.delete {
+  float: left;
+  color: #666;
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1em 0;
+  font-size: 2em;
+  border-bottom: 1px solid #666;
+  width: 20%;
 }
 
 .files-item-div {

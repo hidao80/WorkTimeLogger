@@ -25,14 +25,6 @@ var $ = id => {
 }
 
 /**
- * string id DOM の ID
- */
-function clear(id) {
-  console.log(id);
-  $(id).style.backgroundColor = 'transparent';
-}
-
-/**
  * クリック時の動作
  * 打刻する
  */
@@ -62,51 +54,28 @@ function addItem(_label = undefined) {
     label = _label;
   }
 
+  let num = maxItemNum;
+  
   // 画面に項目追加
-  let id = "item" + maxItemNum;
+  $("items").insertAdjacentHTML('afterbegin','<div id="item'+num+'" class="item"><input type="radio" name="kind" id="radio'+num+'"><label for="radio'+num+'" id="label'+num+'" class="label">'+label+'</label><label for="radio'+num+'" id="delete'+num+'" class="delete">✖︎</label></div>');
 
-  $("items").insertAdjacentHTML('afterbegin','<input type="radio" name="kind" id="item'+maxItemNum+'"><label for="item'+maxItemNum+'">'+label+'</label>');
-
-  // イベントリスナの設定
-  let e = $(id);
-  
-  // ダブルクリック時の動作
-  // 項目を削除する
-  e.addEventListener('dblclick', () => {
-    clearTimeout(timeoutId);  // 1回目のクリック動作をキャンセルする
-    e.style.backgroundColor = DELETE_BG_COLOR;
-    setTimeout("deleteItem('"+id+"','"+label+"')", WAIT_TIME);
-    dblClicking = false; // ダブルクリック中状態解除
-  }, false);    
-
-  // タッチ時の動作
-  if (window.ontouchstart !== undefined) {
-    e.addEventListener('touchstart', (event) => {
-      // 以降のイベントを検知しない
-      event.preventDefault();
-      if (event.targetTouches.length > 1) {      
-        // 2点以上同時タップの場合
-        // 項目を削除する
-        e.style.backgroundColor = DELETE_BG_COLOR;
-        setTimeout("deleteItem('"+id+"','"+label+"')", 500);
-      } else {
-        // 1点タップの場合
-        // 打刻する
-        timeStamp(id,label);
-      }
-    }, false);
-  }
-  
-  // クリック時の動作
-  // 打刻する。ただし、タッチ操作された時は無効  
-  e.addEventListener('click', () => {
-    // ダブルクリック時の2回目が来たら、1回目をキャンセルする
-    if (!dblClicking) {
-      dblClicking = true;
-      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", WAIT_TIME);
-    }
-  }, false);
+  // ラジオボタンイベントリスナの設定
+  let radio_id = "radio" + num;
+  let radio_ev = $(radio_id);
     
+  // クリック時の動作
+  radio_ev.addEventListener('click', () => {
+    timeStamp(radio_id,label);
+  }, false);
+  
+  // 削除ラベルイベントリスナの設定
+  let delete_ev = $("delete" + num);
+    
+  // クリック時の動作
+  delete_ev.addEventListener('click', () => {
+    deleteItem("item"+num,label);
+  }, false);
+  
   // 項目管理番号を1増やす。プログラムを実行するたびに
   // 項目管理番号は変わり、保存されない。
   maxItemNum++;
@@ -118,9 +87,9 @@ function addItem(_label = undefined) {
  * string label ラベル名
  */
 function deleteItem(id, label) {
-  let elem = $(id);
-  
-  elem.parentNode.removeChild(elem);
+  let dom = $(id);
+console.log(id,label);
+  dom.parentNode.removeChild(dom);
 
   itemList.pop(label);
   localStorage.setItem(ITEM_LIST, JSON.stringify(itemList));
@@ -219,27 +188,12 @@ function init() {
   /**
    *「終業」項目にクリック時イベントのアクションを登録
     */
-  let id = "item0";
+  let id = "radio0";
   let e = $(id);
   let label = e.innerText;
 
-  // タッチ時の動作
-  if (window.ontouchstart !== undefined) {
-    e.addEventListener('touchstart', (event) => {
-      // 以降のイベントを検知しない
-      event.preventDefault();
-      // 打刻する
-      timeStamp(id,label);
-    }, false);
-  }
-  
   // クリック時の動作
-  // 打刻する。ただし、タッチ操作された時は無効  
   e.addEventListener('click', () => {
-    // ダブルクリック時の2回目が来たら、1回目をキャンセルする
-    if (!dblClicking) {
-      dblClicking = true;
-      timeoutId = setTimeout("timeStamp('"+id+"','"+label+"')", WAIT_TIME);
-    }
+    timeStamp(id,label);
   }, false);
 }
