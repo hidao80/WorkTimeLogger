@@ -2,8 +2,6 @@ html, body {
   height: 100vh;
   width: 100vw;
   margin: 0;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
 }
 
 #input_box {
@@ -32,8 +30,9 @@ html, body {
 }
 
 #controls {
-  float: right;
+  float: left;
   width: 70vw;
+  height: 100vh;
   overflow-y: auto;
 }
 
