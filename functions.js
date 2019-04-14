@@ -295,7 +295,7 @@ function init() {
   const dom_input = $('input_box');
   dom_input.addEventListener('keydown', (e) => {
     if (e.keyCode === 13) {
-      addItem();
+      addItem(dom_input.value);
     }
   });
 
