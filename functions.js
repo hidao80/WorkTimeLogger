@@ -127,8 +127,7 @@ function displayLog(arrLogs) {
 
   dom.innerHTML = "";
   for (let entry of arrLogs) {
-    let str = entry.time + " " + entry.kind;
-    dom.innerHTML += "<tr id='logId"+num+"'><td onclick='deleteLogItem("+num+",\""+str+"\")'>✖</td><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
+    dom.innerHTML += "<tr id='logId"+num+"'><td onclick='deleteLogItem("+num+")'>✖</td><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
     num++;
   }
 }
@@ -137,13 +136,13 @@ function displayLog(arrLogs) {
  * ログ1件削除
  * int num ログ番号（id）
  */
-function deleteLogItem(num,str) {
-  console.log(num,str);
+function deleteLogItem(num) {
   const dom = $('logId'+num);
   dom.parentNode.removeChild(dom);
 
   // arrLogs はグローバル変数なので、ここで直接削除（やり方が汚い）
-  arrLog = arrLog.filter((entry) => {return entry.time + " " + entry.kind != str;});
+  console.log(num,arrLog);
+  arrLog.splice(arrLog.length - num -1, 1);
 
   // データの更新
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
@@ -165,9 +164,7 @@ function displaySum(arrLogs) {
   let first = {};
   for (let entry of arrLogs) {
     let pre_min = timestampToMinutes(pre.time)
-    console.log("pre", pre.time, pre.kind);
     let min = timestampToMinutes(entry.time);
-    console.log("current", entry.time, entry.kind);
     if (sum[pre.kind] === undefined) {
       sum[pre.kind] = 0;
     }
