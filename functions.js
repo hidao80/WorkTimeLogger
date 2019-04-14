@@ -226,7 +226,6 @@ function init() {
     }
   });
 
-  addItem(dom_input.value); 
   /**
    *「終業」項目にクリック時イベントのアクションを登録
    */
