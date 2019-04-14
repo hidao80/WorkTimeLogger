@@ -12,6 +12,8 @@ const WORK_TIME_LOG = "worktimelog";
 const ITEM_LIST = "itemList";
 const LOG_FILE = "work_time_log.json";
 const WRITE_BG_COLOR = "#58D3F7";
+const ASC = true;
+const DESC = false;
 
 /**
  * ID を入れると DOM Element を返す
@@ -97,13 +99,20 @@ function deleteItem(id, label) {
  * 同じ時刻のものは入れ替わる可能性がある
  * @return array ログを配列にして日時順でソートしたもの
  */
-function sortLog() {
+function sortLog(asc = true) {
   const arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
-  
-  arrLogs.sort((a,b) => {
-    if (a.time < b.time) return 1;
-    else return -1;
-  });
+
+  if (asc === true) {
+    arrLogs.sort((a,b) => {
+      if (a.time < b.time) return 1;
+      else return -1;
+    });  
+  } else { // desc
+    arrLogs.sort((a,b) => {
+      if (a.time > b.time) return 1;
+      else return -1;
+    });  
+  }
   
   return arrLogs;
 }
@@ -113,11 +122,54 @@ function sortLog() {
  */
 function displayLog(arrLogs) {
   const dom = $('log_table');
-  
+  let num = 0;
+
   dom.innerHTML = "";
   for (let entry of arrLogs) {
     dom.innerHTML += "<tr><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
+    num++;
   }
+}
+
+/**
+ * 集計表示
+ */
+function displaySum(arrLogs) {
+  const dom = $('sum_table');
+
+  // 時間集計
+  let pre = arrLogs[0];
+  let sum = {};
+  let first = {};
+  for (let entry of arrLogs) {
+    let pre_min = timestampToMinutes(pre.time)
+    console.log("pre", pre.time, pre.kind);
+    let min = timestampToMinutes(entry.time);
+    console.log("current", entry.time, entry.kind);
+    if (sum[pre.kind] === undefined) {
+      sum[pre.kind] = 0;
+    }
+    sum[pre.kind] += min - pre_min;
+    pre = entry;
+  }
+
+  console.log(sum);
+
+  dom.innerHTML = "";
+  for (let kind in sum) {
+    // 最初の時刻を引くことで経過時間のみを取得
+    dom.innerHTML += "<tr><td>" + kind + "</td><td>" + sum[kind] + "</td><td>分</td></tr>";
+  }
+}
+
+/**
+ * 時分を述べ分数に変換する
+ * string timestamp 時分"HH:mm:SS"
+ * @return integer  述べ分数 
+ */  
+function timestampToMinutes(timestamp) {
+  const val = timestamp.split(' ')[1].split(':');
+  return parseInt(val[0], 10) * 60 + parseInt(val[1], 10);
 }
 
 /**
@@ -134,12 +186,14 @@ function writeLog(label) {
     ('00' + d.getDate()).substr(-2) + 
     dow[d.getDay()] + " " + 
     ('00' + d.getHours()).substr(-2) + ":" +
-    ('00' + d.getMinutes()).substr(-2);
+    ('00' + d.getMinutes()).substr(-2) + ":" +
+    ('00' + d.getSeconds()).substr(-2);
   data.kind = label; 
   arrLog.push(data);
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
   
-  displayLog(sortLog());
+  displayLog(sortLog(ASC));
+  displaySum(sortLog(DESC));
 }
 
 /**
@@ -237,7 +291,8 @@ function init() {
     timeStamp(label);
   }, false);
   
-  displayLog(sortLog());
+  displayLog(sortLog(ASC));
+  displaySum(sortLog(DESC));
   writeVersion();
 }
 

@@ -36,6 +36,20 @@ html, body {
   overflow-y: auto;
 }
 
+#footer {
+	position: absolute;
+  bottom: 0;
+  height: 200px;
+  overflow: scroll;
+  width: 30vw;
+}
+
+#log {
+  height: calc(100% - 200px);
+  overflow: scroll;
+  width: 30vw;
+}
+
 .controls {
   display: table;
   table-layout: fixed;
@@ -101,4 +115,3 @@ input[type="radio"]:checked + .label + .delete {
   text-align: left;
   font-size: 1em;
 }
-
