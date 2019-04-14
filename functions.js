@@ -49,6 +49,9 @@ function addItem(label = undefined) {
     arrItem.push(_label);
     
     localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
+
+    // テキストボックスのクリア
+    $("input_box").value = '';
   } else {
     // localStorage から読み込み
     _label = label;
@@ -75,7 +78,7 @@ function addItem(label = undefined) {
   delete_ev.addEventListener('click', () => {
     deleteItem("item"+num,label);
   }, false);
-  
+
   // 項目管理番号を1増やす。プログラムを実行するたびに
   // 項目管理番号は変わり、保存されない。
   maxItemNum++;
@@ -295,7 +298,7 @@ function init() {
   const dom_input = $('input_box');
   dom_input.addEventListener('keydown', (e) => {
     if (e.keyCode === 13) {
-      addItem(dom_input.value);
+      addItem();
     }
   });
 
