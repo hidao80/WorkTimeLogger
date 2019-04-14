@@ -32,34 +32,34 @@ function timeStamp(label) {
  * 項目の追加
  * string _label option ラベル（あれば優先）
  */
-function addItem(_label = undefined) {
+function addItem(label = undefined) {
   // 引数がなければテキストボックスからラベルを取得
-  let label;
-  if (_label === undefined) {
+  let _label;
+  if (label === undefined) {
     // テキストボックスから追加
-    label = $("input_box").value;
+    _label = $("input_box").value;
     
     // 重複する項目は登録させない
     for (let i in arrItem) {
-      if (arrItem[i] == label) return; 
+      if (arrItem[i] == _label) return; 
     }
     
-    arrItem.push(label);
+    arrItem.push(_label);
     
     localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
   } else {
     // localStorage から読み込み
-    label = _label;
+    _label = label;
   }
 
-  let num = maxItemNum;
+  const num = maxItemNum;
   
   // 画面に項目追加
-  $("items").insertAdjacentHTML('afterbegin','<div id="item'+num+'" class="item"><input type="radio" name="kind" id="radio'+num+'"><label for="radio'+num+'" id="label'+num+'" class="label">'+label+'</label><label for="radio'+num+'" id="delete'+num+'" class="delete">✖︎</label></div>');
+  $("items").insertAdjacentHTML('afterbegin','<div id="item'+num+'" class="item"><input type="radio" name="kind" id="radio'+num+'"><label for="radio'+num+'" id="label'+num+'" class="label">'+_label+'</label><label for="radio'+num+'" id="delete'+num+'" class="delete">✖︎</label></div>');
 
   // ラジオボタンイベントリスナの設定
-  let radio_id = "radio" + num;
-  let radio_ev = $(radio_id);
+  const radio_id = "radio" + num;
+  const radio_ev = $(radio_id);
     
   // クリック時の動作
   radio_ev.addEventListener('click', () => {
@@ -67,7 +67,7 @@ function addItem(_label = undefined) {
   }, false);
   
   // 削除ラベルイベントリスナの設定
-  let delete_ev = $("delete" + num);
+  const delete_ev = $("delete" + num);
     
   // クリック時の動作
   delete_ev.addEventListener('click', () => {
@@ -85,7 +85,7 @@ function addItem(_label = undefined) {
  * string label ラベル名
  */
 function deleteItem(id, label) {
-  let dom = $(id);
+  const dom = $(id);
   dom.parentNode.removeChild(dom);
 
   arrItem.pop(label);
@@ -98,7 +98,7 @@ function deleteItem(id, label) {
  * @return array ログを配列にして日時順でソートしたもの
  */
 function sortLog() {
-  let arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
+  const arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
   
   arrLogs.sort((a,b) => {
     if (a.time < b.time) return 1;
@@ -112,7 +112,7 @@ function sortLog() {
  * ログ表示
  */
 function displayLog(arrLogs) {
-  let dom = $('log_table');
+  const dom = $('log_table');
   
   dom.innerHTML = "";
   for (let entry of arrLogs) {
@@ -125,10 +125,9 @@ function displayLog(arrLogs) {
  * string label ラベル名
  */  
 function writeLog(label) {
-  let now = new Date();
-  let data = {};
-  let d = new Date();
-  let dow = ["日","月","火","水","木","金","土"];
+  const data = {};
+  const d = new Date();
+  const dow = ["日","月","火","水","木","金","土"];
   
   data.time = d.getFullYear() + "/" + 
     ('00' + (d.getMonth() + 1)).substr(-2) + "/" + 
@@ -148,8 +147,8 @@ function writeLog(label) {
  */
 function saveLog() {
   //ファイルを作ってダウンロードします。
-  let resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
-  let downLoadLink = document.createElement("a");
+  const resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
+  const downLoadLink = document.createElement("a");
 
   log = resultJson.replace(/\\/g, "").slice(1,-1); // 文字列を JSON に整形
 
@@ -163,7 +162,7 @@ function saveLog() {
  * ログファイルの削除
  */
 function deleteLog() {
-  let empty = [];
+  const empty = [];
   
   arrLog = empty;
   localStorage.setItem(WORK_TIME_LOG, JSON.stringify(empty));
@@ -220,8 +219,8 @@ function init() {
   /**
    *「終業」項目にクリック時イベントのアクションを登録
     */
-  let dom = $("radio0");
-  let label = $('label0').innerText;
+  const dom = $("radio0");
+  const label = $('label0').innerText;
 
   // クリック時の動作
   dom.addEventListener('click', () => {
@@ -237,8 +236,8 @@ function init() {
  * ものをバージョン番号とする
 */
 function writeVersion() {
-  let xhr = new XMLHttpRequest();
-  let target = ["functions.js","index.html","style.css"];
+  const xhr = new XMLHttpRequest();
+  const target = ["functions.js","index.html","style.css"];
 
   if (xhr) {
     for (let file of target) {
@@ -248,13 +247,13 @@ function writeVersion() {
         //通信完了
         if (xhr.readyState == 4 && xhr.status == 200) {
           //読込後の処理
-          let d = new Date(xhr.getResponseHeader("last-modified"));
-          let strTime = d.getFullYear() + 
+          const d = new Date(xhr.getResponseHeader("last-modified"));
+          const strTime = d.getFullYear() + 
             ('00' + (d.getMonth() + 1)).substr(-2) + 
             ('00' + d.getDate()).substr(-2) + "." + 
             ('00' + d.getHours()).substr(-2) +
             ('00' + d.getMinutes()).substr(-2);
-          let dom = $("delete0");
+          const dom = $("delete0");
           if (dom.innerText < strTime) dom.innerText = "ver\n" + strTime;
           console.log(dom.innerText, strTime);
         }
