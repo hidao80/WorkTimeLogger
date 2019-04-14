@@ -119,6 +119,7 @@ function sortLog(asc = true) {
 
 /**
  * ログ表示
+ * json arrLogs ログ配列
  */
 function displayLog(arrLogs) {
   const dom = $('log_table');
@@ -126,9 +127,30 @@ function displayLog(arrLogs) {
 
   dom.innerHTML = "";
   for (let entry of arrLogs) {
-    dom.innerHTML += "<tr><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
+    let str = entry.time + " " + entry.kind;
+    dom.innerHTML += "<tr id='logId"+num+"'><td onclick='deleteLogItem("+num+",\""+str+"\")'>✖</td><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
     num++;
   }
+}
+
+/**
+ * ログ1件削除
+ * int num ログ番号（id）
+ */
+function deleteLogItem(num,str) {
+  console.log(num,str);
+  const dom = $('logId'+num);
+  dom.parentNode.removeChild(dom);
+
+  // arrLogs はグローバル変数なので、ここで直接削除（やり方が汚い）
+  arrLog = arrLog.filter((entry) => {return entry.time + " " + entry.kind != str;});
+
+  // データの更新
+  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
+
+  // 再描画
+  displayLog(sortLog(ASC));
+  displaySum(sortLog(DESC));
 }
 
 /**
