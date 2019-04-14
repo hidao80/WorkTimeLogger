@@ -217,8 +217,19 @@ function init() {
   arrItem = validateAndGetItems();
 
   /**
+   * 「追加」テキストボックスでEnter押下時にaddItem()を実行
+   */
+  const dom_input = $('input_box');
+  dom_input.addEventListener('keydown', (e) => {
+    if (e.keyCode === 13) {
+      addItem();
+    }
+  });
+
+  addItem(dom_input.value); 
+  /**
    *「終業」項目にクリック時イベントのアクションを登録
-    */
+   */
   const dom = $("radio0");
   const label = $('label0').innerText;
 
