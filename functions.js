@@ -66,17 +66,17 @@ function addItem(label = undefined) {
   const radio_id = "radio" + num;
   const radio_ev = $(radio_id);
     
-  // クリック時の動作
+  // 項目名クリック時の動作
   radio_ev.addEventListener('click', () => {
-    timeStamp(label);
+    timeStamp(_label);
   }, false);
   
   // 削除ラベルイベントリスナの設定
   const delete_ev = $("delete" + num);
     
-  // クリック時の動作
+  // ×ボタンクリック時の動作
   delete_ev.addEventListener('click', () => {
-    deleteItem("item"+num,label);
+    deleteItem("item"+num,_label);
   }, false);
 
   // 項目管理番号を1増やす。プログラムを実行するたびに
