@@ -46,7 +46,7 @@ html, body {
 }
 
 #log {
-  height: calc(100% - 200px);
+  height: calc(100% - 200px - 1em);
   width: 30vw;
   overflow-y: scroll;
   overflow-x: hidden;
