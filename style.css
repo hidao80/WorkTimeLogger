@@ -80,6 +80,16 @@ html, body {
   text-decoration: none;
   font-size: 1em;
 }
+.control:active {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5em 0;
+  color: #666;
+  background-color: #CCC;
+  text-decoration: none;
+  font-size: 1em;
+}
 .control + .control {
     border-left: 1px solid #CCC;
 }

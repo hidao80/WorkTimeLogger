@@ -9,10 +9,7 @@
 <body>
   <div id="contents">
     <div id="logs">
-      <div id="log">
-        <table>
-          <tbody id="log_table"></tbody>
-        </table>
+      <div id="log" contenteditable="true">
       </div>
       <div id="footer">
         <table>
@@ -23,14 +20,15 @@
     <div id="controls">
       <div id="items"> 
         <div id="item0" class="item">
-          <input type="radio" name="kind" id="radio0"><label for="radio0" class="label" id="label0">始業・休憩・終業</label><label for="radio0" class="delete version" id="delete0"></label>
+          <input type="radio" name="kind" id="radio0"><label for="radio0" class="label" id="label0">　休憩</label><label for="radio0" class="delete version" id="delete0"></label>
         </div>
       </div>
       <div id="control-panel">
         <ul class="controls">
           <li class="control"><input id="input_box" type="text" name="item_name" placeholder="項目名を入力"></li>
           <li class="control" onclick="addItem()">追加</li>
-          <li class="control" onclick="saveLog()">ダウンロード</li>
+          <!-- <li class="control" onclick="saveLog()">ダウンロード</li> -->
+          <li class="control" onclick="copyResult()">Markdownで集計をコピー</li>
           <li class="control" onclick="deleteLog()">ログ削除</li>
         </ul>
       </div>

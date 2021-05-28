@@ -1,9 +1,10 @@
+"use strict"
 /**
  * グローバル変数
  */
 var arrItem;
 var arrLog;
-var maxItemNum = 1;
+var maxItemNum = 3;
 
 /**
  * 定数
@@ -103,17 +104,15 @@ function deleteItem(id, label) {
  * @return array ログを配列にして日時順でソートしたもの
  */
 function sortLog(asc = true) {
-  const arrLogs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));
+  const arrLogs = localStorage.getItem(WORK_TIME_LOG).split("\n");
 
   if (asc === true) {
     arrLogs.sort((a,b) => {
-      if (a.time < b.time) return 1;
-      else return -1;
+      return a.time < b.time ? -1 : 1;
     });  
   } else { // desc
     arrLogs.sort((a,b) => {
-      if (a.time > b.time) return 1;
-      else return -1;
+      return a.time < b.time ? 1 : -1;
     });  
   }
   
@@ -125,34 +124,9 @@ function sortLog(asc = true) {
  * json arrLogs ログ配列
  */
 function displayLog(arrLogs) {
-  const dom = $('log_table');
-  let num = 0;
+  const dom = $('log');
 
-  dom.innerHTML = "";
-  for (let entry of arrLogs) {
-    dom.innerHTML += "<tr id='logId"+num+"'><td onclick='deleteLogItem("+num+")'>✖</td><td>" + entry.time + "</td><td>" + entry.kind + "</td></tr>";
-    num++;
-  }
-}
-
-/**
- * ログ1件削除
- * int num ログ番号（id）
- */
-function deleteLogItem(num) {
-  const dom = $('logId'+num);
-  dom.parentNode.removeChild(dom);
-
-  // arrLogs はグローバル変数なので、ここで直接削除（やり方が汚い）
-  console.log(num,arrLog);
-  arrLog.splice(arrLog.length - num -1, 1);
-
-  // データの更新
-  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
-
-  // 再描画
-  displayLog(sortLog(ASC));
-  displaySum(sortLog(DESC));
+  dom.innerText = arrLogs.join("\n");
 }
 
 /**
@@ -162,17 +136,11 @@ function displaySum(arrLogs) {
   const dom = $('sum_table');
 
   // 時間集計
-  let pre = arrLogs[0];
   let sum = {};
-  let first = {};
-  for (let entry of arrLogs) {
-    let pre_min = timestampToMinutes(pre.time)
-    let min = timestampToMinutes(entry.time);
-    if (sum[pre.kind] === undefined) {
-      sum[pre.kind] = 0;
-    }
-    sum[pre.kind] += min - pre_min;
-    pre = entry;
+  for (let i = 1; i < arrLogs.length; i++) {
+    if (arrLogs[i].substr(4).trim() === "") continue;
+    if (sum[arrLogs[i-1].substr(4)] === undefined) sum[arrLogs[i-1].substr(4)] = 0;
+    sum[arrLogs[i-1].substr(4)] += timestampToMinutes(arrLogs[i]) - timestampToMinutes(arrLogs[i-1]);
   }
 
   console.log(sum);
@@ -182,6 +150,8 @@ function displaySum(arrLogs) {
     // 最初の時刻を引くことで経過時間のみを取得
     dom.innerHTML += "<tr><td>" + kind + "</td><td>" + sum[kind] + "</td><td>分</td></tr>";
   }
+
+  return sum;
 }
 
 /**
@@ -190,8 +160,9 @@ function displaySum(arrLogs) {
  * @return integer  述べ分数 
  */  
 function timestampToMinutes(timestamp) {
-  const val = timestamp.split(' ')[1].split(':');
-  return parseInt(val[0], 10) * 60 + parseInt(val[1], 10);
+  const hour = timestamp.substr(0, 2);
+  const min = timestamp.substr(2, 2);
+  return parseInt(hour, 10) * 60 + parseInt(min, 10);
 }
 
 /**
@@ -199,23 +170,17 @@ function timestampToMinutes(timestamp) {
  * string label ラベル名
  */  
 function writeLog(label) {
-  const data = {};
   const d = new Date();
-  const dow = ["日","月","火","水","木","金","土"];
-  
-  data.time = d.getFullYear() + "/" + 
-    ('00' + (d.getMonth() + 1)).substr(-2) + "/" + 
-    ('00' + d.getDate()).substr(-2) + 
-    dow[d.getDay()] + " " + 
-    ('00' + d.getHours()).substr(-2) + ":" +
-    ('00' + d.getMinutes()).substr(-2) + ":" +
-    ('00' + d.getSeconds()).substr(-2);
-  data.kind = label; 
-  arrLog.push(data);
-  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(arrLog));
+  const dom = $("log");
+
+  dom.innerText +=
+      ('00' + d.getHours()).substr(-2)
+    + ('00' + d.getMinutes()).substr(-2)
+    + label + "\n";
+  localStorage.setItem(WORK_TIME_LOG, dom.innerText);
   
   displayLog(sortLog(ASC));
-  displaySum(sortLog(DESC));
+  displaySum(sortLog(ASC));
 }
 
 /**
@@ -241,8 +206,9 @@ function deleteLog() {
   const empty = [];
   
   arrLog = empty;
-  localStorage.setItem(WORK_TIME_LOG, JSON.stringify(empty));
+  localStorage.setItem(WORK_TIME_LOG, "");
   displayLog(empty);
+  displaySum(empty);
 }
 
 /**
@@ -255,7 +221,7 @@ function validateAndGetLog() {
   if (localStorage.getItem(WORK_TIME_LOG) !== undefined &&
       localStorage.getItem(WORK_TIME_LOG) !== null &&
       localStorage.getItem(WORK_TIME_LOG) !== "") {
-    logs = JSON.parse(localStorage.getItem(WORK_TIME_LOG));    
+    logs = localStorage.getItem(WORK_TIME_LOG);
   } else {
     logs = new Array();
   }
@@ -313,8 +279,15 @@ function init() {
     timeStamp(label);
   }, false);
   
+  // ログ編集時の動作
+  $("log").addEventListener('input', () => {
+    localStorage.setItem(WORK_TIME_LOG, $('log').innerText);
+    displaySum(sortLog(ASC));
+  }, false);
+  
+
   displayLog(sortLog(ASC));
-  displaySum(sortLog(DESC));
+  displaySum(sortLog(ASC));
   writeVersion();
 }
 
@@ -348,4 +321,39 @@ function writeVersion() {
       xhr.send(null);
     }
   }
+}
+
+/**
+ * 入力された文字列を読み込んで結果を Markdown のテーブル形式でクリップボードにコピーする
+ */
+function copyResult() {
+  const data = displaySum(sortLog(ASC));
+  
+  let sum = 0, total = 0;
+  let html = 
+`業務名 | 作業時間[時] | 作業時間[分]
+--- | --- | --: | --:
+`;
+
+  for (let category in data) {
+      html += `${category} | ${Math.floor(data[category] / 60)}:${data[category] % 60} | ${data[category]}\n`;
+      if (category.indexOf("　") != 0) sum += data[category];
+      total += data[category];
+  }
+
+  html += `
+実働計： ${Math.floor(sum / 60)}:${sum % 60}  
+総計： ${Math.floor(total / 60)}:${total % 60}`;
+
+  if(navigator.clipboard){
+      navigator.clipboard.writeText(html);
+  }
+}
+
+/**
+ * 
+ * @param {*} min 
+ */
+function minutesToHour(min) {
+  return Math.floor(min / 60) + Math.round(min % 60); 
 }
