@@ -20,7 +20,7 @@ const DESC = false;
  * ID を入れると DOM Element を返す
  */
 var $ = id => {
-    return document.querySelector("#"+id);
+    return document.querySelector("#" + id);
 }
 
 /**
@@ -61,7 +61,7 @@ function addItem(label = undefined) {
     const num = maxItemNum;
 
     // 画面に項目追加
-    $("items").insertAdjacentHTML('afterbegin','<div id="item'+num+'" class="item"><input type="radio" name="kind" id="radio'+num+'"><label for="radio'+num+'" id="label'+num+'" class="label">'+_label+'</label><label for="radio'+num+'" id="delete'+num+'" class="delete">✖︎</label></div>');
+    $("items").insertAdjacentHTML('afterbegin', '<div id="item' + num + '" class="item"><input type="radio" name="kind" id="radio' + num + '"><label for="radio' + num + '" id="label' + num + '" class="label">' + _label + '</label><label for="radio' + num + '" id="delete' + num + '" class="delete">✖︎</label></div>');
 
     // ラジオボタンイベントリスナの設定
     const radio_id = "radio" + num;
@@ -77,7 +77,7 @@ function addItem(label = undefined) {
 
     // ×ボタンクリック時の動作
     delete_ev.addEventListener('click', () => {
-        deleteItem("item"+num,_label);
+        deleteItem("item" + num, _label);
     }, false);
 
     // 項目管理番号を1増やす。プログラムを実行するたびに
@@ -107,11 +107,11 @@ function sortLog(asc = true) {
     const arrLogs = localStorage.getItem(WORK_TIME_LOG).split("\n");
 
     if (asc === true) {
-        arrLogs.sort((a,b) => {
+        arrLogs.sort((a, b) => {
             return a.time < b.time ? -1 : 1;
         });
     } else { // desc
-        arrLogs.sort((a,b) => {
+        arrLogs.sort((a, b) => {
             return a.time < b.time ? 1 : -1;
         });
     }
@@ -139,11 +139,11 @@ function displaySum(arrLogs) {
     let sum = {};
     for (let i = 1; i < arrLogs.length; i++) {
         if (arrLogs[i].substr(4).trim() === "") continue;
-        if (sum[arrLogs[i-1].substr(4)] === undefined) sum[arrLogs[i-1].substr(4)] = 0;
-        sum[arrLogs[i-1].substr(4)] += timestampToMinutes(arrLogs[i]) - timestampToMinutes(arrLogs[i-1]);
+        if (sum[arrLogs[i - 1].substr(4)] === undefined) sum[arrLogs[i - 1].substr(4)] = 0;
+        sum[arrLogs[i - 1].substr(4)] += timestampToMinutes(arrLogs[i]) - timestampToMinutes(arrLogs[i - 1]);
     }
 
-  console.log(sum);
+    console.log(sum);
 
     dom.innerHTML = "";
     for (let kind in sum) {
@@ -174,7 +174,7 @@ function writeLog(label) {
     const dom = $("log");
 
     dom.innerText +=
-            ('00' + d.getHours()).substr(-2)
+        ('00' + d.getHours()).substr(-2)
         + ('00' + d.getMinutes()).substr(-2)
         + label + "\n";
     localStorage.setItem(WORK_TIME_LOG, dom.innerText);
@@ -191,10 +191,10 @@ function saveLog() {
     const resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
     const downLoadLink = document.createElement("a");
 
-    log = resultJson.replace(/\\/g, "").slice(1,-1); // 文字列を JSON に整形
+    log = resultJson.replace(/\\/g, "").slice(1, -1); // 文字列を JSON に整形
 
     downLoadLink.download = LOG_FILE;
-    downLoadLink.href = URL.createObjectURL(new Blob([log], {type: "application/octet-stream"}));
+    downLoadLink.href = URL.createObjectURL(new Blob([log], { type: "application/octet-stream" }));
     downLoadLink.dataset.downloadurl = ["application/octet-stream", LOG_FILE, downLoadLink.href].join(":");
     downLoadLink.click();
 }
@@ -239,7 +239,7 @@ function validateAndGetItems() {
     if (localStorage.getItem(ITEM_LIST) !== undefined &&
         localStorage.getItem(ITEM_LIST) !== null &&
         localStorage.getItem(ITEM_LIST) !== "") {
-    items = JSON.parse(localStorage.getItem(ITEM_LIST));
+        items = JSON.parse(localStorage.getItem(ITEM_LIST));
 
         for (let item of items) {
             if (item != "") addItem(item);
@@ -263,9 +263,9 @@ function init() {
      */
     const dom_input = $('input_box');
     dom_input.addEventListener('keydown', (e) => {
-    if (e.keyCode === 13) {
-        addItem();
-    }
+        if (e.keyCode === 13) {
+            addItem();
+        }
     });
 
     /**
@@ -296,22 +296,22 @@ function init() {
 */
 function writeVersion() {
     const xhr = new XMLHttpRequest();
-    const target = ["functions.js","index.html","style.css"];
+    const target = ["functions.js", "index.html", "style.css"];
 
     if (xhr) {
         for (let file of target) {
             //通信実行
-            xhr.open("get",file, false);
+            xhr.open("get", file, false);
             xhr.onreadystatechange = () => {
                 //通信完了
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     //読込後の処理
                     const d = new Date(xhr.getResponseHeader("last-modified"));
                     const strTime = d.getFullYear() +
-                    ('00' + (d.getMonth() + 1)).substr(-2) +
-                    ('00' + d.getDate()).substr(-2) + "." +
-                    ('00' + d.getHours()).substr(-2) +
-                    ('00' + d.getMinutes()).substr(-2);
+                        ('00' + (d.getMonth() + 1)).substr(-2) +
+                        ('00' + d.getDate()).substr(-2) + "." +
+                        ('00' + d.getHours()).substr(-2) +
+                        ('00' + d.getMinutes()).substr(-2);
                     const dom = $("delete0");
                     if (dom.innerText < strTime) dom.innerText = "ver\n" + strTime;
                     console.log(dom.innerText, strTime);
@@ -330,12 +330,12 @@ function copyResult() {
 
     let sum = 0, total = 0;
     let html =
-`業務名 | 作業時間[時] | 作業時間[分]
+        `業務名 | 作業時間[時] | 作業時間[分]
 --- | --: | --:
 `;
 
     for (let category in data) {
-        html += `${category} | ${Math.floor(data[category] / 60)}:${data[category] % 60} | ${data[category]}\n`;
+        html += `${category} | ${Math.floor(data[category] / 60)}:${("00" + data[category] % 60).slice(-2)} | ${data[category]}\n`;
         if (category.indexOf("　") != 0) sum += data[category];
         total += data[category];
     }
@@ -344,7 +344,7 @@ function copyResult() {
 実働計： ${Math.floor(sum / 60)}:${sum % 60}
 総計： ${Math.floor(total / 60)}:${total % 60}`;
 
-    if(navigator.clipboard){
+    if (navigator.clipboard) {
         navigator.clipboard.writeText(html);
     }
 }
