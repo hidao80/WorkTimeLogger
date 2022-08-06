@@ -206,7 +206,7 @@ function deleteLog() {
  */
 window.onload = () => {
     // 多言語化対応
-    _$("#input_box").placeholder = Multilingualization.translate("Copy in Markdown");
+    _$("#input_box").placeholder = Multilingualization.translate("Enter item name");
     Multilingualization.translateAll();
 
     /**
