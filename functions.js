@@ -320,7 +320,7 @@ class Multilingualization {
      */
     static dictionaries = {
         "en": {
-            "Break": "Break",
+            "Break": "#Break",
             "Minute": "min.",
             "Enter item name": "Enter item name",
             "Add item": "Add item",
