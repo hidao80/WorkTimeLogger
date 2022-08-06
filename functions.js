@@ -1,154 +1,166 @@
 "use strict"
 /**
- * グローバル変数
- */
-var arrItem;
-var arrLog;
-var maxItemNum = 3;
-
-/**
  * 定数
  */
 const WORK_TIME_LOG = "worktimelog";
 const ITEM_LIST = "itemList";
-const LOG_FILE = "work_time_log.json";
-const WRITE_BG_COLOR = "#58D3F7";
-const ASC = true;
-const DESC = false;
 
 /**
- * ID を入れると DOM Element を返す
+ * セレクタを入れると DOM Element を返す
+ * @param {string} selector DOMセレクタ
+ * @return DOMElement
  */
-var $ = id => {
-    return document.querySelector("#" + id);
+var _$ = selector => {
+    return document.querySelector(selector);
 }
 
 /**
- * クリック時の動作
- * 打刻する
+ * localStorageにある項目リストをオブジェクトにパースする
+ * @returns {array}
  */
-function timeStamp(label) {
-    writeLog(label);
+function getItems() {
+    const data = JSON.parse(localStorage.getItem(ITEM_LIST) || "[]");
+    return data;
+}
+
+/**
+ * localStorageにある作業ログをオブジェクトにパースする
+ * @returns {array}
+ */
+function getLogs() {
+    const data = localStorage.getItem(WORK_TIME_LOG);
+    return data;
+}
+
+/**
+ * 項目リストをlocalStorageにjsonとして保存する
+ * @param {array} data データ配列
+ */
+function setItems(data) {
+    localStorage.setItem(ITEM_LIST, JSON.stringify(data || "[]"));
+}
+
+/**
+ * 作業ログをlocalStorageにjsonとして保存する
+ * @param {string} data データ文字列
+ */
+function setLogs(data) {
+    localStorage.setItem(WORK_TIME_LOG, data);
 }
 
 /**
  * 項目の追加
- * string _label option ラベル（あれば優先）
  */
-function addItem(label = undefined) {
-    // 引数がなければテキストボックスからラベルを取得
-    let _label;
-    if (label === undefined) {
-        // テキストボックスから追加
-        _label = $("input_box").value;
+function addItem() {
+    // テキストボックスから追加
+    const label = _$("#input_box").value;
 
-        // 重複する項目は登録させない
-        for (let i in arrItem) {
-            if (arrItem[i] == _label) return;
-        }
+    // 追加するが、重複する項目は削除する
+    let arrItems = getItems();
+    arrItems.push(label);
+    arrItems = arrItems.filter((item, index, self) => self.indexOf(item) === index);
+    setItems(arrItems);
 
-        arrItem.push(_label);
+    // テキストボックスのクリア
+    _$("#input_box").value = '';
 
-        localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
+    const num = arrItems.length;
 
-        // テキストボックスのクリア
-        $("input_box").value = '';
-    } else {
-        // localStorage から読み込み
-        _label = label;
+    addItemButton(num, label)
+}
+
+/**
+ * 画面呼び出し時似だけ走る項目の追加
+ */
+function initItemList() {
+    const arrItems = getItems();
+
+    for (let i = 0; i < arrItems.length; i++) {
+        let label = arrItems[i];
+        let num = i + 1;  // num = 0 は「休憩」で予約されている
+        addItemButton(num, label);
     }
+}
 
-    const num = maxItemNum;
-
+/**
+ * 項目ボタンを一つ追加する
+ * @param {int} num 連番
+ * @param {string} label 表示名
+ */
+function addItemButton(num, label) {
     // 画面に項目追加
-    $("items").insertAdjacentHTML('afterbegin', '<div id="item' + num + '" class="item"><input type="radio" name="kind" id="radio' + num + '"><label for="radio' + num + '" id="label' + num + '" class="label">' + _label + '</label><label for="radio' + num + '" id="delete' + num + '" class="delete">✖︎</label></div>');
+    _$("#items").insertAdjacentHTML('afterbegin', `<div id="item${num}" class="item" data-item="${label}"><input type="radio" name="kind" id="radio${num}"><label for="radio${num}" id="label${num}" class="label">${label}</label><label for="radio${num}" id="delete${num}" class="delete">✖︎</label></div>`);
 
     // ラジオボタンイベントリスナの設定
-    const radio_id = "radio" + num;
-    const radio_ev = $(radio_id);
-
     // 項目名クリック時の動作
-    radio_ev.addEventListener('click', () => {
-        timeStamp(_label);
+    _$("#radio" + num).addEventListener('click', () => {
+        writeLog(label);
     }, false);
-
-    // 削除ラベルイベントリスナの設定
-    const delete_ev = $("delete" + num);
 
     // ×ボタンクリック時の動作
-    delete_ev.addEventListener('click', () => {
-        deleteItem("item" + num, _label);
+    _$("#delete" + num).addEventListener('click', () => {
+        deleteItem("#item" + num);
     }, false);
-
-    // 項目管理番号を1増やす。プログラムを実行するたびに
-    // 項目管理番号は変わり、保存されない。
-    maxItemNum++;
 }
 
 /**
  * 項目リストの項目削除
- * string id   DOM の ID
- * string label ラベル名
+ * @param {string} selector DOMのIDセレクタ
  */
-function deleteItem(id, label) {
-    const dom = $(id);
+function deleteItem(selector) {
+    const dom = _$(selector);
+    setItems(getItems().filter(item => item != dom.dataset.item));
     dom.parentNode.removeChild(dom);
-
-    arrItem.pop(label);
-    localStorage.setItem(ITEM_LIST, JSON.stringify(arrItem));
 }
 
 /**
  * ログソート
  * 同じ時刻のものは入れ替わる可能性がある
+ * @param {string|array} data ログか作業項目リストの配列
  * @return array ログを配列にして日時順でソートしたもの
  */
-function sortLog(asc = true) {
-    const arrLogs = localStorage.getItem(WORK_TIME_LOG).split("\n");
+function sort(data) {
+    let array = (typeof data === 'string') ? data.split("\n") : data;
 
-    if (asc === true) {
-        arrLogs.sort((a, b) => {
-            return a.time < b.time ? -1 : 1;
-        });
-    } else { // desc
-        arrLogs.sort((a, b) => {
-            return a.time < b.time ? 1 : -1;
-        });
-    }
+    // 空行は削除する
+    array = array.filter(item => item.trim() != '');
 
-    return arrLogs;
+    array.sort((a, b) => {
+        return a < b ? -1 : 1;
+    });
+
+    return array;
 }
 
 /**
  * ログ表示
- * json arrLogs ログ配列
  */
-function displayLog(arrLogs) {
-    const dom = $('log');
-
-    dom.innerText = arrLogs.join("\n");
+function displayLog() {
+    _$('#log').innerText = sort(getLogs()).join("\n");
 }
 
 /**
  * 集計表示
+ * @return {object} 入力項目ごとに集計された分数のオブジェクト
  */
-function displaySum(arrLogs) {
-    const dom = $('sum_table');
+function displaySum() {
+    // sort()すると文字列から配列に変換される
+    const lines = sort(getLogs());
 
     // 時間集計
     let sum = {};
-    for (let i = 1; i < arrLogs.length; i++) {
-        if (arrLogs[i].substr(4).trim() === "") continue;
-        if (sum[arrLogs[i - 1].substr(4)] === undefined) sum[arrLogs[i - 1].substr(4)] = 0;
-        sum[arrLogs[i - 1].substr(4)] += timestampToMinutes(arrLogs[i]) - timestampToMinutes(arrLogs[i - 1]);
+    let item;
+    for (let i = 1; i < lines.length; i++) {
+        item = lines[i - 1].slice(4);
+        sum[item] = sum[item] ? sum[item] : 0;
+        sum[item] += timestampToMinutes(lines[i]) - timestampToMinutes(lines[i - 1]);
     }
 
-    console.log(sum);
-
+    const dom = _$('#sum_table');
     dom.innerHTML = "";
     for (let kind in sum) {
         // 最初の時刻を引くことで経過時間のみを取得
-        dom.innerHTML += "<tr><td>" + kind + "</td><td>" + sum[kind] + "</td><td>分</td></tr>";
+        dom.innerHTML += `<tr><td>${kind}</td><td>${sum[kind]}</td><td>${Multilingualization.translate("Minute")}</td></tr>`;
     }
 
     return sum;
@@ -156,147 +168,86 @@ function displaySum(arrLogs) {
 
 /**
  * 時分を述べ分数に変換する
- * string timestamp 時分"HH:mm:SS"
+ * @param {string} timestamp 時分"HHMM"
  * @return integer  述べ分数
  */
 function timestampToMinutes(timestamp) {
-    const hour = timestamp.substr(0, 2);
-    const min = timestamp.substr(2, 2);
-    return parseInt(hour, 10) * 60 + parseInt(min, 10);
+    const hour = timestamp.slice(0, 2);
+    const min = timestamp.slice(2, 4);
+    return parseInt(hour) * 60 + parseInt(min);
 }
 
 /**
  * 打刻
- * string label ラベル名
+ * @param {string} label ラベル名
  */
 function writeLog(label) {
     const d = new Date();
-    const dom = $("log");
+    const text = _$("#log").innerText += "\n" + `0${d.getHours()}`.slice(-2)
+        + `0${d.getMinutes()}`.slice(-2)
+        + label;
 
-    dom.innerText +=
-        ('00' + d.getHours()).substr(-2)
-        + ('00' + d.getMinutes()).substr(-2)
-        + label + "\n";
-    localStorage.setItem(WORK_TIME_LOG, dom.innerText);
-
-    displayLog(sortLog(ASC));
-    displaySum(sortLog(ASC));
-}
-
-/**
- * ログファイルのダウンロード
- */
-function saveLog() {
-    //ファイルを作ってダウンロードします。
-    const resultJson = JSON.stringify(localStorage.getItem(WORK_TIME_LOG));
-    const downLoadLink = document.createElement("a");
-
-    log = resultJson.replace(/\\/g, "").slice(1, -1); // 文字列を JSON に整形
-
-    downLoadLink.download = LOG_FILE;
-    downLoadLink.href = URL.createObjectURL(new Blob([log], { type: "application/octet-stream" }));
-    downLoadLink.dataset.downloadurl = ["application/octet-stream", LOG_FILE, downLoadLink.href].join(":");
-    downLoadLink.click();
+    setLogs(text);
+    displayLog();
+    displaySum();
 }
 
 /**
  * ログファイルの削除
  */
 function deleteLog() {
-    const empty = [];
-
-    arrLog = empty;
-    localStorage.setItem(WORK_TIME_LOG, "");
-    displayLog(empty);
-    displaySum(empty);
-}
-
-/**
- * localStorage にログがあるかどうかチェック
- */
-function validateAndGetLog() {
-    let logs;
-
-    // ログがなければ空の配列を用意する
-    if (localStorage.getItem(WORK_TIME_LOG) !== undefined &&
-        localStorage.getItem(WORK_TIME_LOG) !== null &&
-        localStorage.getItem(WORK_TIME_LOG) !== "") {
-        logs = localStorage.getItem(WORK_TIME_LOG);
-    } else {
-        logs = new Array();
-    }
-
-    return logs;
-}
-
-/**
- * localStorage に項目リストがあるかどうかチェック
- */
-function validateAndGetItems() {
-    let items;
-
-    // 項目リストがなければ空の配列を用意する
-    if (localStorage.getItem(ITEM_LIST) !== undefined &&
-        localStorage.getItem(ITEM_LIST) !== null &&
-        localStorage.getItem(ITEM_LIST) !== "") {
-        items = JSON.parse(localStorage.getItem(ITEM_LIST));
-
-        for (let item of items) {
-            if (item != "") addItem(item);
-        }
-    } else {
-        items = new Array();
-    }
-
-    return items;
+    setLogs("");
+    displayLog([]);
+    displaySum();
 }
 
 /**
  * 初期設定
  */
-function init() {
-    arrLog = validateAndGetLog();
-    arrItem = validateAndGetItems();
+window.onload = () => {
+    // 多言語化対応
+    _$("#input_box").placeholder = Multilingualization.translate("Copy in Markdown");
+    Multilingualization.translateAll();
 
     /**
      * 「追加」テキストボックスでEnter押下時にaddItem()を実行
      */
-    const dom_input = $('input_box');
-    dom_input.addEventListener('keydown', (e) => {
+    _$('#input_box').addEventListener('keydown', (e) => {
         if (e.keyCode === 13) {
             addItem();
         }
     });
 
     /**
-     *「終業」項目にクリック時イベントのアクションを登録
+     *「休憩」項目にクリック時イベントのアクションを登録
     */
-    const dom = $("radio0");
-    const label = $('label0').innerText;
-
     // クリック時の動作
-    dom.addEventListener('click', () => {
-        timeStamp(label);
+    _$("#radio0").addEventListener('click', () => {
+        writeLog(_$('#label0').innerText);
     }, false);
 
     // ログ編集時の動作
-    $("log").addEventListener('input', () => {
-        localStorage.setItem(WORK_TIME_LOG, $('log').innerText);
-        displaySum(sortLog(ASC));
+    _$("#log").addEventListener('input', () => {
+        setLogs(_$('#log').innerText);
+        displaySum();
     }, false);
 
-    displayLog(sortLog(ASC));
-    displaySum(sortLog(ASC));
+    const arrLog = getLogs();
+    displayLog();
+    displaySum();
     writeVersion();
+
+    initItemList();
 }
 
 /**
  * function.js、index.html、style.css のタイムスタンプを読み取り最も新しい
  * ものをバージョン番号とする
 */
-function writeVersion() {
-    const xhr = new XMLHttpRequest();
+async function writeVersion() {
     const target = ["functions.js", "index.html", "style.css"];
+    const xhr = new XMLHttpRequest();
+    let version = "";
 
     if (xhr) {
         for (let file of target) {
@@ -308,13 +259,15 @@ function writeVersion() {
                     //読込後の処理
                     const d = new Date(xhr.getResponseHeader("last-modified"));
                     const strTime = d.getFullYear() +
-                        ('00' + (d.getMonth() + 1)).substr(-2) +
-                        ('00' + d.getDate()).substr(-2) + "." +
-                        ('00' + d.getHours()).substr(-2) +
-                        ('00' + d.getMinutes()).substr(-2);
-                    const dom = $("delete0");
-                    if (dom.innerText < strTime) dom.innerText = "ver\n" + strTime;
-                    console.log(dom.innerText, strTime);
+                        `0${d.getMonth() + 1}`.slice(-2) +
+                        `0${d.getDate()}`.slice(-2) + "." +
+                        `0${d.getHours()}`.slice(-2) +
+                        `0${d.getMinutes()}`.slice(-2);
+
+                    version = version > strTime ? version : strTime;
+
+                    _$("#delete0").innerText = "ver\n" + version;
+                    console.log(version);
                 }
             }
             xhr.send(null);
@@ -326,33 +279,102 @@ function writeVersion() {
  * 入力された文字列を読み込んで結果を Markdown のテーブル形式でクリップボードにコピーする
  */
 function copyResult() {
-    const data = displaySum(sortLog(ASC));
+    const data = displaySum();
 
     let sum = 0, total = 0;
     let html =
-        `業務名 | 作業時間[時] | 作業時間[分]
+`${Multilingualization.translate("Table header")}
 --- | --: | --:
 `;
 
     for (let category in data) {
-        html += `${category} | ${Math.floor(data[category] / 60)}:${("00" + data[category] % 60).slice(-2)} | ${data[category]}\n`;
-        if (category.indexOf("　") != 0) sum += data[category];
+        html += `${category} | ${Math.floor(data[category] / 60)}:${("0" + data[category] % 60).slice(-2)} | ${data[category]}\n`;
+        if (category.indexOf("#") != 0) sum += data[category];
         total += data[category];
     }
 
     html += `
-実働計： ${Math.floor(sum / 60)}:${sum % 60}
-総計： ${Math.floor(total / 60)}:${total % 60}`;
+${Multilingualization.translate("Work hours total")} ${Math.floor(sum / 60)}:${("0" + (sum % 60)).slice(-2)}
+${Multilingualization.translate("Total")} ${Math.floor(total / 60)}:${("0" + (total % 60)).slice(-2)}`;
 
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(html);
-    }
+    navigator.clipboard?.writeText(html);
 }
 
+
+
+
+
+
+
+
+
+
 /**
+ * Multilingualization library class
  *
- * @param {*} min
+ * @class Multilingualization
  */
-function minutesToHour(min) {
-    return Math.floor(min / 60) + Math.round(min % 60);
+class Multilingualization {
+    /**
+     *  @var dictionaries Multilingual dictionary object
+     */
+    static dictionaries = {
+        "en": {
+            "Break": "Break",
+            "Minute": "min.",
+            "Enter item name": "Enter item name",
+            "Add item": "Add item",
+            "Copy in Markdown": "Copy the tally in Markdown",
+            "Delete logs": "Delete logs",
+            "Table header": "Task Name | Task Time [Hours] | Task Time [Minutes]",
+            "Work hours total": "Work hours total: ",
+            "Total": "Total: "
+        },
+        "ja": {
+            "Break": "#休憩",
+            "Minute": "分",
+            "Enter item name": "項目名を入力",
+            "Add item": "追加",
+            "Copy in Markdown": "Markdownで集計をコピー",
+            "Delete logs": "ログ削除",
+            "Table header": "業務名 | 作業時間[時] | 作業時間[分]",
+            "Work hours total": "実働計：",
+            "Total": "総計："
+        }
+    }
+
+    /**
+     * Get current language
+     *
+     * @returns {string} Current language
+     */
+    static language() {
+        const lang = ((window.navigator.languages && window.navigator.languages[0]) ||
+            window.navigator.language ||
+            window.navigator.userLanguage ||
+            window.navigator.browserLanguage).slice(0, 2);
+
+        // Show English for undefined languages
+        return this.dictionaries[lang] ? lang : "en";
+    }
+
+    /**
+     * Get translated term
+     *
+     * @param {string} term Term to be translated
+     * @returns {string} Translated term
+     */
+    static translate(term) {
+        return this.dictionaries[this.language()][term];
+    }
+
+    /**
+     * Initialization of dictionary object
+     */
+    static translateAll() {
+        const dictionary = this.dictionaries[this.language()];
+        for (let elem of document.querySelectorAll('[data-translate]')) {
+            elem.innerHTML = dictionary[elem.dataset.translate];
+        }
+    }
 }
