@@ -1,4 +1,5 @@
-"use strict"
+import __ from "./multilingualization.js";
+
 /**
  * 定数
  */
@@ -160,7 +161,7 @@ function displaySum() {
     dom.innerHTML = "";
     for (let kind in sum) {
         // 最初の時刻を引くことで経過時間のみを取得
-        dom.innerHTML += `<tr><td>${kind}</td><td>${sum[kind]}</td><td>${Multilingualization.translate("Minute")}</td></tr>`;
+        dom.innerHTML += `<tr><td>${kind}</td><td data-unit="${__.translate("Minute")}">${sum[kind]}</td></tr>`;
     }
 
     return sum;
@@ -206,8 +207,8 @@ function deleteLog() {
  */
 window.onload = () => {
     // 多言語化対応
-    _$("#input_box").placeholder = Multilingualization.translate("Enter item name");
-    Multilingualization.translateAll();
+    _$("#input_box").placeholder = __.translate("Enter item name");
+    __.translateAll();
 
     /**
      * 「追加」テキストボックスでEnter押下時にaddItem()を実行
@@ -231,6 +232,18 @@ window.onload = () => {
         setLogs(_$('#log').innerText);
         displaySum();
     }, false);
+
+    _$('#add_item').addEventListener('click', () => {
+        addItem();
+    })
+
+    _$('#copy_result').addEventListener('click', () => {
+        copyResult();
+    })
+
+    _$('#delete_log').addEventListener('click', () => {
+        deleteLog();
+    })
 
     const arrLog = getLogs();
     displayLog();
@@ -283,7 +296,7 @@ function copyResult() {
 
     let sum = 0, total = 0;
     let html =
-`${Multilingualization.translate("Table header")}
+`${__.translate("Table header")}
 --- | --: | --:
 `;
 
@@ -294,87 +307,8 @@ function copyResult() {
     }
 
     html += `
-${Multilingualization.translate("Work hours total")} ${Math.floor(sum / 60)}:${("0" + (sum % 60)).slice(-2)}
-${Multilingualization.translate("Total")} ${Math.floor(total / 60)}:${("0" + (total % 60)).slice(-2)}`;
+${__.translate("Work hours total")} ${Math.floor(sum / 60)}:${("0" + (sum % 60)).slice(-2)}
+${__.translate("Total")} ${Math.floor(total / 60)}:${("0" + (total % 60)).slice(-2)}`;
 
     navigator.clipboard?.writeText(html);
-}
-
-
-
-
-
-
-
-
-
-
-/**
- * Multilingualization library class
- *
- * @class Multilingualization
- */
-class Multilingualization {
-    /**
-     *  @var dictionaries Multilingual dictionary object
-     */
-    static dictionaries = {
-        "en": {
-            "Break": "#Break",
-            "Minute": "min.",
-            "Enter item name": "Enter item name",
-            "Add item": "Add item",
-            "Copy in Markdown": "Copy the tally in Markdown",
-            "Delete logs": "Delete logs",
-            "Table header": "Task Name | Task Time [Hours] | Task Time [Minutes]",
-            "Work hours total": "Work hours total: ",
-            "Total": "Total: "
-        },
-        "ja": {
-            "Break": "#休憩",
-            "Minute": "分",
-            "Enter item name": "項目名を入力",
-            "Add item": "追加",
-            "Copy in Markdown": "Markdownで集計をコピー",
-            "Delete logs": "ログ削除",
-            "Table header": "業務名 | 作業時間[時] | 作業時間[分]",
-            "Work hours total": "実働計：",
-            "Total": "総計："
-        }
-    }
-
-    /**
-     * Get current language
-     *
-     * @returns {string} Current language
-     */
-    static language() {
-        const lang = ((window.navigator.languages && window.navigator.languages[0]) ||
-            window.navigator.language ||
-            window.navigator.userLanguage ||
-            window.navigator.browserLanguage).slice(0, 2);
-
-        // Show English for undefined languages
-        return this.dictionaries[lang] ? lang : "en";
-    }
-
-    /**
-     * Get translated term
-     *
-     * @param {string} term Term to be translated
-     * @returns {string} Translated term
-     */
-    static translate(term) {
-        return this.dictionaries[this.language()][term];
-    }
-
-    /**
-     * Initialization of dictionary object
-     */
-    static translateAll() {
-        const dictionary = this.dictionaries[this.language()];
-        for (let elem of document.querySelectorAll('[data-translate]')) {
-            elem.innerHTML = dictionary[elem.dataset.translate];
-        }
-    }
 }

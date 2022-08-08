@@ -15,6 +15,7 @@ A web tool that records the time when a button is pressed and the combination of
 3. Repeat adding as many work types as necessary.
 4. Press the appropriate work button at the time of starting the work.
 A log of button presses is recorded in localStorage and appended to the screen.
+5. Logs can be entered directly; each character edited is automatically saved to the browser.
 
 ## Caution
 - Duplicate work buttons cannot be registered.
