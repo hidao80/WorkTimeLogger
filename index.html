@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>Work Time Logger</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="functions.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/main.js" type="module"></script>
 </head>
 
 <body>
@@ -29,10 +29,10 @@
             <div id="control-panel">
                 <ul class="controls">
                     <li class="control"><input id="input_box" type="text" name="item_name" placeholder="項目名を入力"></li>
-                    <li class="control" onclick="addItem()" data-translate="Add item">追加</li>
+                    <li class="control" id="add_item" data-translate="Add item">追加</li>
                     <!-- <li class="control" onclick="saveLog()">ダウンロード</li> -->
-                    <li class="control" onclick="copyResult()" data-translate="Copy in Markdown">Markdownで集計をコピー</li>
-                    <li class="control" onclick="deleteLog()" data-translate="Delete logs">ログ削除</li>
+                    <li class="control" id="copy_result" data-translate="Copy in Markdown">Markdownで集計をコピー</li>
+                    <li class="control" id="delete_log" data-translate="Delete logs">ログ削除</li>
                 </ul>
             </div>
         </div>
