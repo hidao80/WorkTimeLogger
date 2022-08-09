@@ -30,3 +30,7 @@ A log of button presses is recorded in localStorage and appended to the screen.
 Please feel free to contact Issues in this repository.
 
 Translated with www.DeepL.com/Translator (free version)
+
+## License
+
+MIT
